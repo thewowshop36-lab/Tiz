@@ -21,24 +21,38 @@
         <header class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">Duty & Attendance Tracker</h1>
-                <p class="text-xs font-medium text-indigo-600 mt-1">Timesheet Cycle: 21st to 20th of next month</p>
+                <p class="text-xs font-medium text-indigo-600 mt-1" id="header-cycle-label">Timesheet Cycle: Custom</p>
             </div>
-            <div class="text-left sm:text-right">
-                <p class="text-xs text-gray-500 uppercase tracking-wider">Today's Date</p>
-                <p class="text-sm font-semibold text-gray-800" id="current-date"></p>
+            <div class="flex items-center gap-3">
+                <button onclick="shareApp()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-medium text-xs py-2 px-3.5 rounded-xl border border-indigo-200 transition flex items-center gap-1.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+                    Share App
+                </button>
+                <div class="text-left sm:text-right border-l pl-3 border-gray-200">
+                    <p class="text-xs text-gray-500 uppercase tracking-wider">Today</p>
+                    <p class="text-sm font-semibold text-gray-800" id="current-date"></p>
+                </div>
             </div>
         </header>
 
-        <!-- Duty Hours Settings Card -->
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <!-- Settings Card (Hours & Cycle Type) -->
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-                <h2 class="text-sm font-bold text-gray-800">Daily Duty Hours Setting</h2>
-                <p class="text-xs text-gray-500">Set hours per duty shift (e.g., 10, 11.5, 12)</p>
+                <label class="block text-xs font-bold text-gray-700 mb-1">Daily Duty Hours</label>
+                <div class="flex items-center gap-2">
+                    <input type="number" id="shift-hours-input" step="0.5" min="1" max="24" class="w-full bg-gray-50 border border-gray-300 text-gray-900 font-bold text-center py-2 px-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" value="10">
+                </div>
             </div>
-            <div class="flex items-center gap-3 w-full sm:w-auto">
-                <input type="number" id="shift-hours-input" step="0.5" min="1" max="24" class="w-24 bg-gray-50 border border-gray-300 text-gray-900 font-bold text-center py-2 px-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500" value="10">
-                <button onclick="updateShiftHours()" class="bg-gray-900 hover:bg-indigo-600 text-white text-xs font-medium py-2.5 px-4 rounded-xl transition duration-150">
-                    Save Hours
+            <div>
+                <label class="block text-xs font-bold text-gray-700 mb-1">Timesheet Cycle Type</label>
+                <select id="cycle-type-select" class="w-full bg-gray-50 border border-gray-300 text-gray-900 font-medium py-2 px-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                    <option value="21_to_20">21st to 20th of next month</option>
+                    <option value="1_to_end">1st to End of month</option>
+                </select>
+            </div>
+            <div class="sm:col-span-2 flex justify-end">
+                <button onclick="saveSettings()" class="bg-gray-900 hover:bg-indigo-600 text-white text-xs font-medium py-2.5 px-6 rounded-xl transition duration-150 shadow-sm">
+                    Save Settings
                 </button>
             </div>
         </div>
@@ -54,7 +68,7 @@
             </div>
             <p class="text-gray-600 mb-6 text-base" id="prompt-question-text"></p>
             <div class="flex flex-col sm:flex-row gap-3">
-                <button onclick="markAttendance(true)" id="yes-btn" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-xl transition duration-150 shadow-sm flex items-center justify-center gap-2">
+                <button onclick="markAttendance(true)" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-xl transition duration-150 shadow-sm flex items-center justify-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                     Yes, Went to Duty (<span id="btn-hours-label">10</span> Hours)
                 </button>
@@ -127,69 +141,66 @@
             return date.toLocaleDateString('en-US', options);
         }
 
-        function getCycleKeyForDate(dateStr) {
-            let [y, m, d] = dateStr.split('-').map(Number);
-            let year = y;
-            let month = m;
-            
-            if (d >= 21) {
-                month += 1;
-                if (month > 12) {
-                    month = 1;
-                    year += 1;
-                }
-            }
-            return `${year}-${String(month).padStart(2, '0')}`;
+        // سائیکل ٹائپ کے حساب سے چیک کریں کہ آیا تاریخ موجودہ سائیکل میں آتی ہے یا نہیں
+        function isDateInActiveCycle(dateStr, cycleType, activeCycle) {
+            return dateStr >= activeCycle.startDate && dateStr <= activeCycle.endDate;
         }
 
-        function getCurrentActiveCycle() {
+        // موجودہ فعال سائیکل کی رینج معلوم کرنا (چاہے 21 سے 20 ہو یا 1st سے End)
+        function getCurrentActiveCycle(cycleType) {
             const now = new Date();
             let y = now.getFullYear();
             let m = now.getMonth() + 1;
             let d = now.getDate();
 
-            let startYear = y;
-            let startMonth = m;
-            let endYear = y;
-            let endMonth = m;
+            let startYear, startMonth, endYear, endMonth;
 
-            if (d >= 21) {
+            if (cycleType === '21_to_20') {
+                if (d >= 21) {
+                    startMonth = m;
+                    startYear = y;
+                    endMonth = m + 1;
+                    endYear = y;
+                    if (endMonth > 12) { endMonth = 1; endYear += 1; }
+                } else {
+                    startMonth = m - 1;
+                    startYear = y;
+                    if (startMonth < 1) { startMonth = 12; startYear -= 1; }
+                    endMonth = m;
+                    endYear = y;
+                }
+                return {
+                    startDate: `${startYear}-${String(startMonth).padStart(2, '0')}-21`,
+                    endDate: `${endYear}-${String(endMonth).padStart(2, '0')}-20`
+                };
+            } else {
+                // 1st to End of current month
                 startMonth = m;
                 startYear = y;
-                endMonth = m + 1;
-                endYear = y;
-                if (endMonth > 12) {
-                    endMonth = 1;
-                    endYear += 1;
-                }
-            } else {
-                startMonth = m - 1;
-                startYear = y;
-                if (startMonth < 1) {
-                    startMonth = 12;
-                    startYear -= 1;
-                }
-                endMonth = m;
-                endYear = y;
+                // مہینے کا آخری دن معلوم کرنا
+                let lastDay = new Date(y, m, 0).getDate();
+                return {
+                    startDate: `${startYear}-${String(startMonth).padStart(2, '0')}-01`,
+                    endDate: `${startYear}-${String(startMonth).padStart(2, '0')}-${lastDay}`
+                };
             }
-
-            return {
-                key: `${endYear}-${String(endMonth).padStart(2, '0')}`,
-                startDate: `${startYear}-${String(startMonth).padStart(2, '0')}-21`,
-                endDate: `${endYear}-${String(endMonth).padStart(2, '0')}-20`
-            };
         }
 
         let attendanceData = JSON.parse(localStorage.getItem('duty_attendance_data')) || {};
         let defaultShiftHours = parseFloat(localStorage.getItem('duty_shift_hours')) || 10;
+        let cycleType = localStorage.getItem('duty_cycle_type') || '21_to_20';
 
         function initApp() {
             const todayStr = getTodayDateString();
             document.getElementById('current-date').innerText = formatDisplayDate(todayStr);
             
-            // سیٹنگ ان پٹ میں موجودہ گھنٹے سیٹ کریں
+            // سیٹنگ ویلیوز سیٹ کریں
             document.getElementById('shift-hours-input').value = defaultShiftHours;
             document.getElementById('btn-hours-label').innerText = defaultShiftHours;
+            document.getElementById('cycle-type-select').value = cycleType;
+            
+            const cycleText = cycleType === '21_to_20' ? 'Timesheet Cycle: 21st to 20th' : 'Timesheet Cycle: 1st to End of Month';
+            document.getElementById('header-cycle-label').innerText = cycleText;
 
             if (!attendanceData[todayStr]) {
                 document.getElementById('daily-prompt-card').classList.remove('hidden');
@@ -201,16 +212,25 @@
             updateDashboardAndTable();
         }
 
-        function updateShiftHours() {
+        function saveSettings() {
             const inputVal = parseFloat(document.getElementById('shift-hours-input').value);
+            const selectVal = document.getElementById('cycle-type-select').value;
+
             if (isNaN(inputVal) || inputVal <= 0) {
                 alert("Please enter a valid number of hours.");
                 return;
             }
+
             defaultShiftHours = inputVal;
+            cycleType = selectVal;
+
             localStorage.setItem('duty_shift_hours', defaultShiftHours);
+            localStorage.setItem('duty_cycle_type', cycleType);
+            
             document.getElementById('btn-hours-label').innerText = defaultShiftHours;
-            alert(`Duty hours updated successfully to ${defaultShiftHours} hours!`);
+
+            alert("Settings saved successfully!");
+            initApp();
         }
 
         function markAttendance(isWent) {
@@ -227,8 +247,22 @@
             updateDashboardAndTable();
         }
 
+        function shareApp() {
+            const shareText = "Check out this awesome Duty & Attendance Tracker Web App to manage your work hours and monthly timesheet easily!";
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Duty & Attendance Tracker',
+                    text: shareText,
+                    url: window.location.href,
+                }).catch(console.error);
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert("App link copied to clipboard!");
+            }
+        }
+
         function updateDashboardAndTable() {
-            const activeCycle = getCurrentActiveCycle();
+            const activeCycle = getCurrentActiveCycle(cycleType);
             document.getElementById('cycle-range-text').innerText = `${activeCycle.startDate} to ${activeCycle.endDate}`;
 
             let totalPresent = 0;
@@ -246,9 +280,9 @@
 
             sortedDates.forEach(dateStr => {
                 const record = attendanceData[dateStr];
-                const dateCycleKey = getCycleKeyForDate(dateStr);
-
-                if (dateCycleKey === activeCycle.key) {
+                
+                // چیک کریں کہ آیا یہ انٹری موجودہ سلیکٹ شدہ سائیکل کے اندر آتی ہے یا نہیں
+                if (isDateInActiveCycle(dateStr, cycleType, activeCycle)) {
                     if (record.status === 'Present') {
                         totalPresent++;
                         totalHours += record.hours;
