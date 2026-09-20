@@ -38,7 +38,7 @@
         <!-- Settings Card (Hours & Cycle Type) -->
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-                <label class="block text-xs font-bold text-gray-700 mb-1">Default Daily Duty Hours</label>
+                <label class="block text-xs font-bold text-gray-700 mb-1">Default Daily Duty Hours (Without OT)</label>
                 <div class="flex items-center gap-2">
                     <input type="number" id="shift-hours-input" step="0.5" min="1" max="24" class="w-full bg-gray-50 border border-gray-300 text-gray-900 font-bold text-center py-2 px-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" value="10">
                 </div>
@@ -72,7 +72,7 @@
             <div class="bg-gray-50 p-3.5 rounded-xl border border-gray-200 flex items-center justify-between gap-4">
                 <div>
                     <label class="block text-xs font-bold text-gray-800">Extra Overtime (OT) Hours</label>
-                    <p class="text-xs text-gray-500">Add extra OT hours if applicable (leave 0 if none)</p>
+                    <p class="text-xs text-gray-500">If OT is added, normal duty will adjust to 8 hrs</p>
                 </div>
                 <input type="number" id="prompt-ot-input" step="0.5" min="0" max="12" class="w-24 bg-white border border-gray-300 text-gray-900 font-bold text-center py-1.5 px-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" value="0">
             </div>
@@ -80,7 +80,7 @@
             <div class="flex flex-col sm:flex-row gap-3 pt-2">
                 <button onclick="markAttendance(true)" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-xl transition duration-150 shadow-sm flex items-center justify-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                    Yes, Went to Duty (<span id="btn-hours-label">10</span> Hrs)
+                    Yes, Went to Duty
                 </button>
                 <button onclick="markAttendance(false)" class="flex-1 bg-white hover:bg-gray-50 text-rose-600 border border-rose-200 font-medium py-3 px-6 rounded-xl transition duration-150 flex items-center justify-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -208,13 +208,11 @@
         let defaultShiftHours = parseFloat(localStorage.getItem('duty_shift_hours')) || 10;
         let cycleType = localStorage.getItem('duty_cycle_type') || '21_to_20';
 
-        // ڈیٹا کو چیک کریں اور پرانے ریکارڈز کو اپڈیٹ کریں تاکہ گھنٹے مس نہ ہوں
         function migrateOldData() {
             let updated = false;
             for (let date in attendanceData) {
                 let rec = attendanceData[date];
                 if (rec.status === 'Present') {
-                    // اگر پرانے ریکارڈ میں normalHours سیو نہیں تھا تو اسے ڈیفالٹ گھنٹے دے دیں
                     if (rec.normalHours === undefined || rec.normalHours === null) {
                         rec.normalHours = defaultShiftHours;
                         updated = true;
@@ -231,13 +229,12 @@
         }
 
         function initApp() {
-            migrateOldData(); // پرانا ڈیٹا فکس کرنے کے لیے
+            migrateOldData();
 
             const todayStr = getTodayDateString();
             document.getElementById('current-date').innerText = formatDisplayDate(todayStr);
             
             document.getElementById('shift-hours-input').value = defaultShiftHours;
-            document.getElementById('btn-hours-label').innerText = defaultShiftHours;
             document.getElementById('cycle-type-select').value = cycleType;
             
             const cycleText = cycleType === '21_to_20' ? 'Timesheet Cycle: 21st to 20th' : 'Timesheet Cycle: 1st to End of Month';
@@ -279,8 +276,6 @@
 
             localStorage.setItem('duty_shift_hours', defaultShiftHours);
             localStorage.setItem('duty_cycle_type', cycleType);
-            
-            document.getElementById('btn-hours-label').innerText = defaultShiftHours;
 
             alert("Settings saved successfully!");
             initApp();
@@ -292,9 +287,12 @@
             const otVal = parseFloat(document.getElementById('prompt-ot-input').value) || 0;
 
             if (isWent) {
+                // اگر OT لگایا جائے گا تو نارمل ڈیوٹی 8 گھنٹے ہو جائے گی، ورنہ ڈیفॉلت گھنٹے رہیں گے
+                let normalHrs = (otVal > 0) ? 8 : defaultShiftHours;
+
                 attendanceData[selectedDateToMark] = { 
                     status: 'Present', 
-                    normalHours: defaultShiftHours, 
+                    normalHours: normalHrs, 
                     otHours: otVal 
                 };
             } else {
@@ -370,9 +368,16 @@
                 if (record) {
                     if (record.status === 'Present') {
                         totalPresent++;
-                        // یقینی بنائیں کہ اگر پرانا ریکارڈ بھی ہے تو گھنٹے درست جمع ہوں
-                        totalNormalHours += (record.normalHours !== undefined ? record.normalHours : defaultShiftHours);
-                        totalOtHours += (record.otHours || 0);
+                        let nHrs = (record.normalHours !== undefined ? record.normalHours : defaultShiftHours);
+                        let oHrs = (record.otHours || 0);
+                        
+                        // اگر پرانے ریکارڈ میں OT موجود ہے لیکن نارمل گھنٹے 10 لکھے ہیں تو اسے خود بخود 8 کر لیں
+                        if (oHrs > 0 && nHrs > 8) {
+                            nHrs = 8;
+                        }
+
+                        totalNormalHours += nHrs;
+                        totalOtHours += oHrs;
                     } else {
                         totalAbsent++;
                     }
@@ -381,8 +386,12 @@
                         ? `<span class="bg-emerald-50 text-emerald-700 py-1 px-3 rounded-full text-xs font-semibold border border-emerald-200">Present</span>`
                         : `<span class="bg-rose-50 text-rose-700 py-1 px-3 rounded-full text-xs font-semibold border border-rose-200">Absent</span>`;
 
-                    const displayedNormalHrs = record.normalHours !== undefined ? record.normalHours : (record.status === 'Present' ? defaultShiftHours : 0);
-                    const otDisplay = (record.otHours > 0) ? `${record.otHours} Hrs` : `-`;
+                    let displayedNormalHrs = (record.normalHours !== undefined ? record.normalHours : defaultShiftHours);
+                    if ((record.otHours || 0) > 0 && displayedNormalHrs > 8) {
+                        displayedNormalHrs = 8;
+                    }
+
+                    const otDisplay = ((record.otHours || 0) > 0) ? `${record.otHours} Hrs` : `-`;
 
                     row.innerHTML = `
                         <td class="py-3.5 px-3 text-gray-700 font-medium">${dateStr}</td>
