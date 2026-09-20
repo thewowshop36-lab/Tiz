@@ -1,76 +1,96 @@
 <!DOCTYPE html>
-<html lang="ur" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ڈیوٹی اور حاضری ٹریکر</title>
+    <title>Duty & Attendance Tracker</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Noto Nastaliq Urdu', serif;
+            font-family: 'Inter', sans-serif;
         }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen p-4 sm:p-6">
+<body class="bg-gray-50 text-gray-900 min-h-screen p-4 sm:p-8">
 
-    <div class="max-w-2xl mx-auto space-y-6">
+    <div class="max-w-3xl mx-auto space-y-6">
         
-        <!-- ہیڈر -->
-        <header class="text-center bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-700">
-            <h1 class="text-2xl sm:text-3xl font-bold text-emerald-400">ڈیوٹی اور حاضری ٹریکر</h1>
-            <p class="text-sm text-slate-400 mt-1" id="current-date"></p>
+        <!-- Header -->
+        <header class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Duty & Attendance Tracker</h1>
+                <p class="text-xs font-medium text-indigo-600 mt-1">Timesheet Cycle: 21st to 20th of next month</p>
+            </div>
+            <div class="text-left sm:text-right">
+                <p class="text-xs text-gray-500 uppercase tracking-wider">Today's Date</p>
+                <p class="text-sm font-semibold text-gray-800" id="current-date"></p>
+            </div>
         </header>
 
-        <!-- ڈیلی کوئಶ್ಚن پاپ اپ / باکس -->
-        <div id="daily-prompt-card" class="bg-gradient-to-r from-slate-800 to-slate-850 p-6 rounded-2xl shadow-xl border-2 border-emerald-500/50 hidden">
-            <h2 class="text-lg font-bold text-amber-400 mb-3 text-center">آج کی حاضری کا سوال</h2>
-            <p class="text-center text-slate-200 mb-6" id="prompt-question-text"></p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <button onclick="markAttendance(true)" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-6 rounded-xl transition duration-200 shadow-md">
-                    ہاں (ڈیوٹی پر گیا - 10 گھنٹے)
+        <!-- Daily Prompt Card (Hidden if already answered today) -->
+        <div id="daily-prompt-card" class="bg-white p-6 rounded-2xl shadow-md border-2 border-indigo-500 hidden">
+            <div class="flex items-center gap-3 mb-3">
+                <span class="flex h-3 w-3 relative">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
+                </span>
+                <h2 class="text-lg font-bold text-gray-900">Daily Attendance Check</h2>
+            </div>
+            <p class="text-gray-600 mb-6 text-base" id="prompt-question-text"></p>
+            <div class="flex flex-col sm:flex-row gap-3">
+                <button onclick="markAttendance(true)" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-xl transition duration-150 shadow-sm flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    Yes, Went to Duty (+10 Hours)
                 </button>
-                <button onclick="markAttendance(false)" class="bg-rose-600 hover:bg-rose-500 text-white font-bold py-3 px-6 rounded-xl transition duration-200 shadow-md">
-                    نہیں (آج چھٹی / ایبسنٹ)
+                <button onclick="markAttendance(false)" class="flex-1 bg-white hover:bg-gray-50 text-rose-600 border border-rose-200 font-medium py-3 px-6 rounded-xl transition duration-150 flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    No, Absent / Off Day
                 </button>
             </div>
         </div>
 
-        <!-- ماہانہ سمری ڈیش بورڈ -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 text-center shadow">
-                <p class="text-sm text-slate-400">کل ڈیوٹی دن</p>
-                <p class="text-2xl font-bold text-emerald-400 mt-1" id="total-present">0</p>
+        <!-- Active Cycle Summary Dashboard -->
+        <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-5">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-100 pb-4 gap-2">
+                <h2 class="text-base font-bold text-gray-800">Current Timesheet Summary</h2>
+                <span class="text-xs font-medium bg-indigo-50 text-indigo-700 py-1 px-3 rounded-full border border-indigo-100" id="cycle-range-text"></span>
             </div>
-            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 text-center shadow">
-                <p class="text-sm text-slate-400">کل ایبسنٹ (چھٹیاں)</p>
-                <p class="text-2xl font-bold text-rose-400 mt-1" id="total-absent">0</p>
-            </div>
-            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 text-center shadow">
-                <p class="text-sm text-slate-400">مہینے کے کل گھنٹے</p>
-                <p class="text-2xl font-bold text-amber-400 mt-1"><span id="total-hours">0</span> گھنٹے</p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 text-center">
+                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Present Days</p>
+                    <p class="text-2xl font-bold text-emerald-600 mt-1" id="total-present">0</p>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 text-center">
+                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Absents</p>
+                    <p class="text-2xl font-bold text-rose-600 mt-1" id="total-absent">0</p>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 text-center">
+                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Hours Worked</p>
+                    <p class="text-2xl font-bold text-indigo-600 mt-1"><span id="total-hours">0</span> <span class="text-sm font-normal text-gray-500">Hrs</span></p>
+                </div>
             </div>
         </div>
 
-        <!-- ہسٹری ٹیبل -->
-        <div class="bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-700">
+        <!-- History Records Table -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
             <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-bold text-slate-200">گزشتہ ریکارڈ (ہسٹری)</h2>
-                <button onclick="resetData()" class="text-xs bg-slate-700 hover:bg-rose-900/50 text-slate-400 hover:text-rose-300 py-1 px-3 rounded border border-slate-600 transition">تمام ڈیٹا مٹائیں</button>
+                <h2 class="text-base font-bold text-gray-800">Attendance History</h2>
+                <button onclick="resetData()" class="text-xs text-gray-500 hover:text-rose-600 bg-gray-50 hover:bg-rose-50 py-1.5 px-3 rounded-lg border border-gray-200 transition">Clear All Data</button>
             </div>
             <div class="overflow-x-auto">
-                <table class="w-full text-right border-collapse">
+                <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="border-b border-slate-700 text-slate-400 text-sm">
-                            <th class="py-3 px-2">تاریخ</th>
-                            <th class="py-3 px-2">اسٹیٹس</th>
-                            <th class="py-3 px-2">گھنٹے</th>
-                            <th class="py-3 px-2 text-center">عمل</th>
+                        <tr class="border-b border-gray-100 text-gray-400 text-xs uppercase tracking-wider">
+                            <th class="py-3 px-3">Date</th>
+                            <th class="py-3 px-3">Status</th>
+                            <th class="py-3 px-3">Hours</th>
+                            <th class="py-3 px-3 text-center">Action</th>
                         </tr>
                     </thead>
-                    <tbody id="history-table-body" class="divide-y divide-slate-700/50 text-sm">
-                        <!-- جاوا اسکریپت کے ذریعے یہاں ڈیٹا آئے گا -->
+                    <tbody id="history-table-body" class="divide-y divide-gray-100 text-sm">
+                        <!-- Dynamic Data injected via JavaScript -->
                     </tbody>
                 </table>
             </div>
@@ -78,9 +98,8 @@
 
     </div>
 
-    <!-- جاوا اسکریپت کوڈ -->
+    <!-- JavaScript Application Logic -->
     <script>
-        // تاریخ حاصل کرنے کا طریقہ (YYYY-MM-DD فارمیٹ)
         function getTodayDateString() {
             const now = new Date();
             const year = now.getFullYear();
@@ -89,11 +108,63 @@
             return `${year}-${month}-${day}`;
         }
 
-        // تاریخ کو خوبصورت انداز میں دکھانے کے لیے
         function formatDisplayDate(dateStr) {
-            const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
-            const date = new Date(dateStr);
-            return date.toLocaleDateString('ur-PK', options);
+            const options = { year: 'numeric', month: 'short', day: 'numeric', weekday: 'short' };
+            const date = new Date(dateStr + 'T00:00:00');
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        function getCycleKeyForDate(dateStr) {
+            let [y, m, d] = dateStr.split('-').map(Number);
+            let year = y;
+            let month = m;
+            
+            if (d >= 21) {
+                month += 1;
+                if (month > 12) {
+                    month = 1;
+                    year += 1;
+                }
+            }
+            return `${year}-${String(month).padStart(2, '0')}`;
+        }
+
+        function getCurrentActiveCycle() {
+            const now = new Date();
+            let y = now.getFullYear();
+            let m = now.getMonth() + 1;
+            let d = now.getDate();
+
+            let startYear = y;
+            let startMonth = m;
+            let endYear = y;
+            let endMonth = m;
+
+            if (d >= 21) {
+                startMonth = m;
+                startYear = y;
+                endMonth = m + 1;
+                endYear = y;
+                if (endMonth > 12) {
+                    endMonth = 1;
+                    endYear += 1;
+                }
+            } else {
+                startMonth = m - 1;
+                startYear = y;
+                if (startMonth < 1) {
+                    startMonth = 12;
+                    startYear -= 1;
+                }
+                endMonth = m;
+                endYear = y;
+            }
+
+            return {
+                key: `${endYear}-${String(endMonth).padStart(2, '0')}`,
+                startDate: `${startYear}-${String(startMonth).padStart(2, '0')}-21`,
+                endDate: `${endYear}-${String(endMonth).padStart(2, '0')}-20`
+            };
         }
 
         let attendanceData = JSON.parse(localStorage.getItem('duty_attendance_data')) || {};
@@ -102,10 +173,9 @@
             const todayStr = getTodayDateString();
             document.getElementById('current-date').innerText = formatDisplayDate(todayStr);
 
-            // چیک کریں کہ کیا آج کی انٹری ہو چکی ہے یا نہیں
             if (!attendanceData[todayStr]) {
                 document.getElementById('daily-prompt-card').classList.remove('hidden');
-                document.getElementById('prompt-question-text').innerText = `آج (${formatDisplayDate(todayStr)}) کیا آپ ڈیوٹی پر گئے ہیں؟`;
+                document.getElementById('prompt-question-text').innerText = `Did you go to duty today (${formatDisplayDate(todayStr)})?`;
             } else {
                 document.getElementById('daily-prompt-card').classList.add('hidden');
             }
@@ -128,7 +198,7 @@
         }
 
         function deleteEntry(dateStr) {
-            if (confirm("کیا آپ واقعی اس دن کا ریکارڈ حذف کرنا چاہتے ہیں؟")) {
+            if (confirm("Are you sure you want to delete this record?")) {
                 delete attendanceData[dateStr];
                 localStorage.setItem('duty_attendance_data', JSON.stringify(attendanceData));
                 initApp();
@@ -136,7 +206,7 @@
         }
 
         function resetData() {
-            if (confirm("کیا آپ تمام مہینے کا ریکارڈ صاف کرنا چاہتے ہیں؟")) {
+            if (confirm("Are you sure you want to clear all history data?")) {
                 localStorage.removeItem('duty_attendance_data');
                 attendanceData = {};
                 initApp();
@@ -144,6 +214,9 @@
         }
 
         function updateDashboardAndTable() {
+            const activeCycle = getCurrentActiveCycle();
+            document.getElementById('cycle-range-text').innerText = `${activeCycle.startDate} to ${activeCycle.endDate}`;
+
             let totalPresent = 0;
             let totalAbsent = 0;
             let totalHours = 0;
@@ -151,47 +224,52 @@
             const tableBody = document.getElementById('history-table-body');
             tableBody.innerHTML = '';
 
-            // تاریخوں کو ترتیب وار لانے کے لیے (نئی تاریخ اوپر)
             const sortedDates = Object.keys(attendanceData).sort().reverse();
 
             if (sortedDates.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-slate-500">کوئی ریکارڈ موجود نہیں ہے</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-gray-400">No attendance records found.</td></tr>`;
             }
 
             sortedDates.forEach(dateStr => {
                 const record = attendanceData[dateStr];
-                if (record.status === 'Present') {
-                    totalPresent++;
-                    totalHours += record.hours;
-                } else {
-                    totalAbsent++;
+                const dateCycleKey = getCycleKeyForDate(dateStr);
+
+                if (dateCycleKey === activeCycle.key) {
+                    if (record.status === 'Present') {
+                        totalPresent++;
+                        totalHours += record.hours;
+                    } else {
+                        totalAbsent++;
+                    }
                 }
 
                 const row = document.createElement('tr');
-                row.className = "hover:bg-slate-750 transition";
+                row.className = "hover:bg-gray-50/80 transition";
+                
+                const isCurrentCycleItem = (dateCycleKey === activeCycle.key);
                 
                 const statusBadge = record.status === 'Present' 
-                    ? `<span class="bg-emerald-900/50 text-emerald-400 py-1 px-2.5 rounded-full text-xs font-semibold border border-emerald-700/50">حاضر (Present)</span>`
-                    : `<span class="bg-rose-900/50 text-rose-400 py-1 px-2.5 rounded-full text-xs font-semibold border border-rose-700/50">غیر حاضر (Absent)</span>`;
+                    ? `<span class="bg-emerald-50 text-emerald-700 py-1 px-3 rounded-full text-xs font-semibold border border-emerald-200">Present</span>`
+                    : `<span class="bg-rose-50 text-rose-700 py-1 px-3 rounded-full text-xs font-semibold border border-rose-200">Absent</span>`;
 
                 row.innerHTML = `
-                    <td class="py-3 px-2 text-slate-300">${dateStr}</td>
-                    <td class="py-3 px-2">${statusBadge}</td>
-                    <td class="py-3 px-2 font-bold text-slate-200">${record.hours} گھنٹے</td>
-                    <td class="py-3 px-2 text-center">
-                        <button onclick="deleteEntry('${dateStr}')" class="text-rose-400 hover:text-rose-300 bg-slate-700 hover:bg-slate-600 p-1.5 rounded transition">حذف</button>
+                    <td class="py-3.5 px-3 text-gray-700 font-medium">${dateStr} ${isCurrentCycleItem ? '<span class="text-xs text-indigo-600 font-normal"></span>' : ''}</td>
+                    <td class="py-3.5 px-3">${statusBadge}</td>
+                    <td class="py-3.5 px-3 font-semibold text-gray-800">${record.hours} Hrs</td>
+                    <td class="py-3.5 px-3 text-center">
+                        <button onclick="deleteEntry('${dateStr}')" class="text-gray-400 hover:text-rose-600 bg-gray-50 hover:bg-rose-50 p-1.5 rounded-lg transition">
+                            <svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0. 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
                     </td>
                 `;
                 tableBody.appendChild(row);
             });
 
-            // ڈیش بورڈ کی اقدار اپڈیٹ کریں
             document.getElementById('total-present').innerText = totalPresent;
             document.getElementById('total-absent').innerText = totalAbsent;
             document.getElementById('total-hours').innerText = totalHours;
         }
 
-        // ایپ شروع کریں
         window.onload = initApp;
     </script>
 </body>
