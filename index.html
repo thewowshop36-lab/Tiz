@@ -1,143 +1,198 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ur" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>B2B Sales Expert - Mercor Job Opportunity</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>ڈیوٹی اور حاضری ٹریکر</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Nastaliq Urdu', serif;
+        }
+    </style>
 </head>
-<body>
-    <header class="navbar">
-        <div class="container nav-container">
-            <div class="logo">
-                <i class="fa-solid fa-shapes logo-icon"></i>
-                <span class="brand-name">Mercor</span>
-            </div>
-            <a href="#apply" class="nav-btn">Browse Opportunities</a>
-        </div>
-    </header>
+<body class="bg-slate-900 text-slate-100 min-h-screen p-4 sm:p-6">
 
-    <main class="container main-content">
-        <div class="back-link">
-            <a href="#"><i class="fa-solid fa-arrow-left"></i> View all opportunities</a>
-        </div>
+    <div class="max-w-2xl mx-auto space-y-6">
+        
+        <!-- ہیڈر -->
+        <header class="text-center bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-700">
+            <h1 class="text-2xl sm:text-3xl font-bold text-emerald-400">ڈیوٹی اور حاضری ٹریکر</h1>
+            <p class="text-sm text-slate-400 mt-1" id="current-date"></p>
+        </header>
 
-        <section class="job-header">
-            <div class="job-title-badge">
-                <span class="badge">Early applicant</span>
-            </div>
-            <div class="job-header-flex">
-                <div>
-                    <h1 class="job-title">B2B Sales Expert (3+ YOE, US Only)</h1>
-                    <div class="job-meta">
-                        <span class="meta-item"><i class="fa-regular fa-clock"></i> Hourly contract</span>
-                        <span class="meta-item"><i class="fa-solid fa-globe"></i> Remote</span>
-                        <span class="meta-item"><i class="fa-solid fa-bolt"></i> Fast Hiring</span>
-                    </div>
-                </div>
-                <div class="rate-card">
-                    <div class="rate-amount">$50-$70</div>
-                    <div class="rate-period">per hour</div>
-                </div>
-            </div>
-        </section>
-
-        <hr class="divider">
-
-        <div class="posted-by">
-            <div class="avatar"><i class="fa-solid fa-building"></i></div>
-            <div>
-                <div class="posted-title">Posted by Mercor</div>
-                <a href="https://mercor.com" target="_blank" class="company-link">mercor.com</a>
+        <!-- ڈیلی کوئಶ್ಚن پاپ اپ / باکس -->
+        <div id="daily-prompt-card" class="bg-gradient-to-r from-slate-800 to-slate-850 p-6 rounded-2xl shadow-xl border-2 border-emerald-500/50 hidden">
+            <h2 class="text-lg font-bold text-amber-400 mb-3 text-center">آج کی حاضری کا سوال</h2>
+            <p class="text-center text-slate-200 mb-6" id="prompt-question-text"></p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button onclick="markAttendance(true)" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-6 rounded-xl transition duration-200 shadow-md">
+                    ہاں (ڈیوٹی پر گیا - 10 گھنٹے)
+                </button>
+                <button onclick="markAttendance(false)" class="bg-rose-600 hover:bg-rose-500 text-white font-bold py-3 px-6 rounded-xl transition duration-200 shadow-md">
+                    نہیں (آج چھٹی / ایبسنٹ)
+                </button>
             </div>
         </div>
 
-        <hr class="divider">
-
-        <div class="content-grid">
-            <div class="left-col">
-                <section class="section-box">
-                    <h2>Role Overview</h2>
-                    <p>We’re hiring an Enterprise Account Executive and B2B Sales Leader to create real business value for Mercor. This is a quota-carrying IC role owning the full sales cycle — prospecting, executive engagement, technical scoping, negotiation, and close.</p>
-                    <p><strong>Note:</strong> This opportunity requires an estimated 40 hours of work every week.</p>
-                </section>
-
-                <section class="section-box">
-                    <h2>What You’ll Do</h2>
-                    <ul class="styled-list">
-                        <li>Generate and qualify pipeline through outbound, executive relationships, events, and partnerships.</li>
-                        <li>Run consultative cycles with senior operators and technical leaders; build the business case that gets budget approved.</li>
-                        <li>Partner with Engineers to scope deployments, run POCs with clear success metrics, and negotiate multi-year agreements to signature.</li>
-                        <li>Expand accounts beyond the first deal, keep clean CRM hygiene, and forecast accurately.</li>
-                        <li>Feed market signal back to product and GTM leadership.</li>
-                    </ul>
-                </section>
-
-                <section class="section-box">
-                    <h2>What We’re Looking For</h2>
-                    <ul class="styled-list">
-                        <li>3+ years of enterprise B2B sales experience, ideally selling technical or platform products to the Fortune 500.</li>
-                        <li>Track record of consistently hitting quota and closing complex, multi-stakeholder deals ($500K+ ACV).</li>
-                        <li>Comfort selling to both C-suite and technical buyers; able to translate ambiguous business problems into a concrete value thesis.</li>
-                        <li>Strong discovery, commercial negotiation, and pipeline-generation skills.</li>
-                        <li>Thrives in a fast-moving, high-autonomy startup environment.</li>
-                    </ul>
-                </section>
-
-                <section class="section-box highlight-box">
-                    <h2>Contract and Payment Terms</h2>
-                    <ul class="styled-list">
-                        <li>You will be engaged as an independent contractor.</li>
-                        <li>This is a fully remote role that can be completed on your own schedule.</li>
-                        <li>Projects can be extended, shortened, or concluded early depending on needs and performance.</li>
-                        <li>Payments are weekly on Stripe or Wise based on services rendered.</li>
-                    </ul>
-                </section>
+        <!-- ماہانہ سمری ڈیش بورڈ -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 text-center shadow">
+                <p class="text-sm text-slate-400">کل ڈیوٹی دن</p>
+                <p class="text-2xl font-bold text-emerald-400 mt-1" id="total-present">0</p>
             </div>
-
-            <div class="right-col">
-                <div class="apply-card" id="apply">
-                    <h3>Apply for this position</h3>
-                    <p>Submit your details to start the quick AI interview evaluation.</p>
-                    <form id="applyForm">
-                        <div class="form-group">
-                            <label>Full Name</label>
-                            <input type="text" placeholder="John Doe" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Email Address</label>
-                            <input type="email" placeholder="john@example.com" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Years of B2B Sales Experience</label>
-                            <select required>
-                                <option value="">Select experience</option>
-                                <option value="3-5">3 - 5 Years</option>
-                                <option value="5-8">5 - 8 Years</option>
-                                <option value="8+">8+ Years</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="submit-btn">Apply via Mercor</button>
-                    </form>
-                </div>
-
-                <div class="referral-box">
-                    <i class="fa-solid fa-gift gift-icon"></i>
-                    <h4>Earn up to $280 by referring</h4>
-                    <p>Share this job with qualified peers and earn up to $280 for each successful hire.</p>
-                    <button class="refer-btn" onclick="copyReferral()">Copy Referral Link</button>
-                </div>
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 text-center shadow">
+                <p class="text-sm text-slate-400">کل ایبسنٹ (چھٹیاں)</p>
+                <p class="text-2xl font-bold text-rose-400 mt-1" id="total-absent">0</p>
+            </div>
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 text-center shadow">
+                <p class="text-sm text-slate-400">مہینے کے کل گھنٹے</p>
+                <p class="text-2xl font-bold text-amber-400 mt-1"><span id="total-hours">0</span> گھنٹے</p>
             </div>
         </div>
-    </main>
 
-    <footer>
-        <div class="container footer-content">
-            <p>© 2026 Mercor Inc. All rights reserved.</p>
+        <!-- ہسٹری ٹیبل -->
+        <div class="bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-700">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-slate-200">گزشتہ ریکارڈ (ہسٹری)</h2>
+                <button onclick="resetData()" class="text-xs bg-slate-700 hover:bg-rose-900/50 text-slate-400 hover:text-rose-300 py-1 px-3 rounded border border-slate-600 transition">تمام ڈیٹا مٹائیں</button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-right border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-700 text-slate-400 text-sm">
+                            <th class="py-3 px-2">تاریخ</th>
+                            <th class="py-3 px-2">اسٹیٹس</th>
+                            <th class="py-3 px-2">گھنٹے</th>
+                            <th class="py-3 px-2 text-center">عمل</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-table-body" class="divide-y divide-slate-700/50 text-sm">
+                        <!-- جاوا اسکریپت کے ذریعے یہاں ڈیٹا آئے گا -->
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </footer>
 
-    <script src="script.js"></script>
+    </div>
+
+    <!-- جاوا اسکریپت کوڈ -->
+    <script>
+        // تاریخ حاصل کرنے کا طریقہ (YYYY-MM-DD فارمیٹ)
+        function getTodayDateString() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // تاریخ کو خوبصورت انداز میں دکھانے کے لیے
+        function formatDisplayDate(dateStr) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('ur-PK', options);
+        }
+
+        let attendanceData = JSON.parse(localStorage.getItem('duty_attendance_data')) || {};
+
+        function initApp() {
+            const todayStr = getTodayDateString();
+            document.getElementById('current-date').innerText = formatDisplayDate(todayStr);
+
+            // چیک کریں کہ کیا آج کی انٹری ہو چکی ہے یا نہیں
+            if (!attendanceData[todayStr]) {
+                document.getElementById('daily-prompt-card').classList.remove('hidden');
+                document.getElementById('prompt-question-text').innerText = `آج (${formatDisplayDate(todayStr)}) کیا آپ ڈیوٹی پر گئے ہیں؟`;
+            } else {
+                document.getElementById('daily-prompt-card').classList.add('hidden');
+            }
+
+            updateDashboardAndTable();
+        }
+
+        function markAttendance(isWent) {
+            const todayStr = getTodayDateString();
+            
+            if (isWent) {
+                attendanceData[todayStr] = { status: 'Present', hours: 10 };
+            } else {
+                attendanceData[todayStr] = { status: 'Absent', hours: 0 };
+            }
+
+            localStorage.setItem('duty_attendance_data', JSON.stringify(attendanceData));
+            document.getElementById('daily-prompt-card').classList.add('hidden');
+            updateDashboardAndTable();
+        }
+
+        function deleteEntry(dateStr) {
+            if (confirm("کیا آپ واقعی اس دن کا ریکارڈ حذف کرنا چاہتے ہیں؟")) {
+                delete attendanceData[dateStr];
+                localStorage.setItem('duty_attendance_data', JSON.stringify(attendanceData));
+                initApp();
+            }
+        }
+
+        function resetData() {
+            if (confirm("کیا آپ تمام مہینے کا ریکارڈ صاف کرنا چاہتے ہیں؟")) {
+                localStorage.removeItem('duty_attendance_data');
+                attendanceData = {};
+                initApp();
+            }
+        }
+
+        function updateDashboardAndTable() {
+            let totalPresent = 0;
+            let totalAbsent = 0;
+            let totalHours = 0;
+
+            const tableBody = document.getElementById('history-table-body');
+            tableBody.innerHTML = '';
+
+            // تاریخوں کو ترتیب وار لانے کے لیے (نئی تاریخ اوپر)
+            const sortedDates = Object.keys(attendanceData).sort().reverse();
+
+            if (sortedDates.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-slate-500">کوئی ریکارڈ موجود نہیں ہے</td></tr>`;
+            }
+
+            sortedDates.forEach(dateStr => {
+                const record = attendanceData[dateStr];
+                if (record.status === 'Present') {
+                    totalPresent++;
+                    totalHours += record.hours;
+                } else {
+                    totalAbsent++;
+                }
+
+                const row = document.createElement('tr');
+                row.className = "hover:bg-slate-750 transition";
+                
+                const statusBadge = record.status === 'Present' 
+                    ? `<span class="bg-emerald-900/50 text-emerald-400 py-1 px-2.5 rounded-full text-xs font-semibold border border-emerald-700/50">حاضر (Present)</span>`
+                    : `<span class="bg-rose-900/50 text-rose-400 py-1 px-2.5 rounded-full text-xs font-semibold border border-rose-700/50">غیر حاضر (Absent)</span>`;
+
+                row.innerHTML = `
+                    <td class="py-3 px-2 text-slate-300">${dateStr}</td>
+                    <td class="py-3 px-2">${statusBadge}</td>
+                    <td class="py-3 px-2 font-bold text-slate-200">${record.hours} گھنٹے</td>
+                    <td class="py-3 px-2 text-center">
+                        <button onclick="deleteEntry('${dateStr}')" class="text-rose-400 hover:text-rose-300 bg-slate-700 hover:bg-slate-600 p-1.5 rounded transition">حذف</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            // ڈیش بورڈ کی اقدار اپڈیٹ کریں
+            document.getElementById('total-present').innerText = totalPresent;
+            document.getElementById('total-absent').innerText = totalAbsent;
+            document.getElementById('total-hours').innerText = totalHours;
+        }
+
+        // ایپ شروع کریں
+        window.onload = initApp;
+    </script>
 </body>
 </html>
