@@ -19,21 +19,46 @@
         
         <!-- Header -->
         <header class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-900">Duty & Attendance Tracker</h1>
-                <p class="text-xs font-medium text-indigo-600 mt-1" id="header-cycle-label">Timesheet Cycle: Custom</p>
+            <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Duty & Attendance Tracker</h1>
+                    <p class="text-xs font-medium text-indigo-600 mt-1" id="header-cycle-label">Timesheet Cycle: Custom</p>
+                </div>
+                <!-- Three-Dot Menu Button -->
+                <button onclick="toggleSidebar(true)" class="sm:hidden bg-gray-100 hover:bg-gray-200 p-2.5 rounded-xl text-gray-700 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </button>
             </div>
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
                 <button onclick="shareApp()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-medium text-xs py-2 px-3.5 rounded-xl border border-indigo-200 transition flex items-center gap-1.5">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
-                    Share App
+                    Share
                 </button>
-                <div class="text-left sm:text-right border-l pl-3 border-gray-200">
+                <button onclick="toggleSidebar(true)" class="hidden sm:flex bg-gray-100 hover:bg-gray-200 py-2 px-3.5 rounded-xl text-xs font-semibold text-gray-700 items-center gap-1.5 transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    Past Months Menu
+                </button>
+                <div class="text-right border-l pl-3 border-gray-200">
                     <p class="text-xs text-gray-500 uppercase tracking-wider">Today</p>
                     <p class="text-sm font-semibold text-gray-800" id="current-date"></p>
                 </div>
             </div>
         </header>
+
+        <!-- Sidebar / Drawer for Past Records -->
+        <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-50 hidden transition-opacity opacity-0" onclick="toggleSidebar(false)"></div>
+        <div id="sidebar-drawer" class="fixed top-0 right-0 h-full w-80 sm:w-96 bg-white z-50 shadow-2xl p-6 transform translate-x-full transition-transform duration-300 flex flex-col">
+            <div class="flex justify-between items-center border-b border-gray-100 pb-4 mb-4">
+                <h2 class="text-lg font-bold text-gray-900">Past Months Records</h2>
+                <button onclick="toggleSidebar(false)" class="text-gray-400 hover:text-gray-600 p-1 rounded-lg">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <p class="text-xs text-gray-500 mb-4">Select a past timesheet cycle to review total summary and records.</p>
+            <div id="past-months-container" class="flex-1 overflow-y-auto space-y-3 pr-1">
+                <!-- Past months dynamically loaded -->
+            </div>
+        </div>
 
         <!-- Settings Card (Hours & Cycle Type) -->
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -92,7 +117,7 @@
         <!-- Active Cycle Summary Dashboard -->
         <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-5">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-100 pb-4 gap-2">
-                <h2 class="text-base font-bold text-gray-800">Current Timesheet Summary</h2>
+                <h2 class="text-base font-bold text-gray-800" id="dashboard-title-label">Current Timesheet Summary</h2>
                 <span class="text-xs font-medium bg-indigo-50 text-indigo-700 py-1 px-3 rounded-full border border-indigo-100" id="cycle-range-text"></span>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
@@ -122,8 +147,8 @@
         <!-- History Records Table -->
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
             <div class="flex justify-between items-center mb-4">
-                <h2 class="text-base font-bold text-gray-800">Attendance History & Cycle Days</h2>
-                <span class="text-xs text-gray-400 font-medium">Click pending dates to mark attendance</span>
+                <h2 class="text-base font-bold text-gray-800" id="table-title-label">Attendance History & Cycle Days</h2>
+                <button id="reset-view-btn" onclick="resetToCurrentCycle()" class="hidden text-xs bg-indigo-50 text-indigo-600 font-medium py-1.5 px-3 rounded-lg border border-indigo-200 hover:bg-indigo-100 transition">Back to Current Cycle</button>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
@@ -148,6 +173,7 @@
     <!-- JavaScript Application Logic -->
     <script>
         let selectedDateToMark = null;
+        let viewingCustomCycle = null; // اگر یوزر کسی پرانے مہینے کو سلیکٹ کرے
 
         function getTodayDateString() {
             const now = new Date();
@@ -161,10 +187,6 @@
             const options = { year: 'numeric', month: 'short', day: 'numeric', weekday: 'short' };
             const date = new Date(dateStr + 'T00:00:00');
             return date.toLocaleDateString('en-US', options);
-        }
-
-        function isDateInActiveCycle(dateStr, cycleType, activeCycle) {
-            return dateStr >= activeCycle.startDate && dateStr <= activeCycle.endDate;
         }
 
         function getCurrentActiveCycle(cycleType) {
@@ -250,6 +272,108 @@
                 document.getElementById('daily-prompt-card').classList.add('hidden');
             }
 
+            buildPastMonthsList();
+            updateDashboardAndTable();
+        }
+
+        // سائیڈ بار کو کھولنے یا بند کرنے کے لیے
+        function toggleSidebar(open) {
+            const drawer = document.getElementById('sidebar-drawer');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (open) {
+                overlay.classList.remove('hidden');
+                setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+                drawer.classList.remove('translate-x-full');
+            } else {
+                overlay.classList.add('opacity-0');
+                drawer.classList.add('translate-x-full');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+            }
+        }
+
+        // پچھلے مہینوں کی لسٹ خودکار طور پر تیار کرنا
+        function buildPastMonthsList() {
+            const container = document.getElementById('past-months-container');
+            container.innerHTML = '';
+
+            // تمام ریکارڈز میں سے تاریخیں نکال کر مہینے معلوم کریں
+            let dates = Object.keys(attendanceData).sort().reverse();
+            if (dates.length === 0) {
+                container.innerHTML = `<p class="text-xs text-gray-400 text-center py-6">No past records available yet.</p>`;
+                return;
+            }
+
+            // مہینے کے سائیکلز کے گروپس بنائیں
+            let cyclesMap = {};
+            dates.forEach(dateStr => {
+                let cycleKey = getCycleKeyForDateStr(dateStr, cycleType);
+                if (!cyclesMap[cycleKey]) {
+                    cyclesMap[cycleKey] = getCycleRangeForKey(cycleKey, cycleType);
+                }
+            });
+
+            let sortedCycleKeys = Object.keys(cyclesMap).sort().reverse();
+
+            sortedCycleKeys.forEach(key => {
+                let range = cyclesMap[key];
+                let btn = document.createElement('button');
+                btn.className = "w-full text-left bg-gray-50 hover:bg-indigo-50 border border-gray-200 hover:border-indigo-200 p-3.5 rounded-xl transition flex justify-between items-center group";
+                btn.onclick = () => {
+                    viewingCustomCycle = range;
+                    toggleSidebar(false);
+                    updateDashboardAndTable();
+                };
+
+                btn.innerHTML = `
+                    <div>
+                        <p class="text-xs font-bold text-gray-800 group-hover:text-indigo-600">${range.title}</p>
+                        <p class="text-[11px] text-gray-500 mt-0.5">${range.startDate} to ${range.endDate}</p>
+                    </div>
+                    <svg class="w-4 h-4 text-gray-400 group-hover:text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        function getCycleKeyForDateStr(dateStr, cType) {
+            let [y, m, d] = dateStr.split('-').map(Number);
+            if (cType === '21_to_20') {
+                if (d >= 21) {
+                    m += 1;
+                    if (m > 12) { m = 1; y += 1; }
+                }
+                return `${y}-${String(m).padStart(2, '0')}`;
+            } else {
+                return `${y}-${String(m).padStart(2, '0')}`;
+            }
+        }
+
+        function getCycleRangeForKey(cycleKey, cType) {
+            let [y, m] = cycleKey.split('-').map(Number);
+            if (cType === '21_to_20') {
+                let prevY = y, prevM = m - 1;
+                if (prevM < 1) { prevM = 12; prevY -= 1; }
+                
+                const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                let title = `${monthNames[prevM-1]} 21 - ${monthNames[m-1]} 20, ${y}`;
+                return {
+                    title: title,
+                    startDate: `${prevY}-${String(prevM).padStart(2, '0')}-21`,
+                    endDate: `${y}-${String(m).padStart(2, '0')}-20`
+                };
+            } else {
+                const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                let lastDay = new Date(y, m, 0).getDate();
+                return {
+                    title: `${monthNames[m-1]} ${y}`,
+                    startDate: `${y}-${String(m).padStart(2, '0')}-01`,
+                    endDate: `${y}-${String(m).padStart(2, '0')}-${lastDay}`
+                };
+            }
+        }
+
+        function resetToCurrentCycle() {
+            viewingCustomCycle = null;
             updateDashboardAndTable();
         }
 
@@ -287,9 +411,7 @@
             const otVal = parseFloat(document.getElementById('prompt-ot-input').value) || 0;
 
             if (isWent) {
-                // اگر OT لگایا جائے گا تو نارمل ڈیوٹی 8 گھنٹے ہو جائے گی، ورنہ ڈیفॉلت گھنٹے رہیں گے
                 let normalHrs = (otVal > 0) ? 8 : defaultShiftHours;
-
                 attendanceData[selectedDateToMark] = { 
                     status: 'Present', 
                     normalHours: normalHrs, 
@@ -306,7 +428,7 @@
             localStorage.setItem('duty_attendance_data', JSON.stringify(attendanceData));
             document.getElementById('daily-prompt-card').classList.add('hidden');
             selectedDateToMark = null;
-            updateDashboardAndTable();
+            initApp();
         }
 
         function shareApp() {
@@ -323,14 +445,16 @@
             }
         }
 
-        function getDatesInRange(startDateStr, endDateStr) {
+        function getDatesInRange(startDateStr, endDateStr, isCurrentActive) {
             let arr = [];
             let dt = new Date(startDateStr);
             let endDt = new Date(endDateStr);
             
-            let todayStr = getTodayDateString();
-            let maxDt = new Date(todayStr);
-            if (endDt > maxDt) endDt = maxDt;
+            if (isCurrentActive) {
+                let todayStr = getTodayDateString();
+                let maxDt = new Date(todayStr);
+                if (endDt > maxDt) endDt = maxDt;
+            }
 
             while (dt <= endDt) {
                 let y = dt.getFullYear();
@@ -343,8 +467,20 @@
         }
 
         function updateDashboardAndTable() {
-            const activeCycle = getCurrentActiveCycle(cycleType);
+            const activeCycle = viewingCustomCycle || getCurrentActiveCycle(cycleType);
+            const isCurrentActive = !viewingCustomCycle;
+
             document.getElementById('cycle-range-text').innerText = `${activeCycle.startDate} to ${activeCycle.endDate}`;
+            
+            if (isCurrentActive) {
+                document.getElementById('dashboard-title-label').innerText = "Current Timesheet Summary";
+                document.getElementById('table-title-label').innerText = "Attendance History & Cycle Days";
+                document.getElementById('reset-view-btn').classList.add('hidden');
+            } else {
+                document.getElementById('dashboard-title-label').innerText = `Archived Summary (${activeCycle.title || 'Past Month'})`;
+                document.getElementById('table-title-label').innerText = `Archived Records (${activeCycle.startDate} to ${activeCycle.endDate})`;
+                document.getElementById('reset-view-btn').classList.remove('hidden');
+            }
 
             let totalPresent = 0;
             let totalAbsent = 0;
@@ -354,7 +490,7 @@
             const tableBody = document.getElementById('history-table-body');
             tableBody.innerHTML = '';
 
-            const cycleDates = getDatesInRange(activeCycle.startDate, activeCycle.endDate);
+            const cycleDates = getDatesInRange(activeCycle.startDate, activeCycle.endDate, isCurrentActive);
 
             if (cycleDates.length === 0) {
                 tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-gray-400">No attendance records found.</td></tr>`;
@@ -370,11 +506,7 @@
                         totalPresent++;
                         let nHrs = (record.normalHours !== undefined ? record.normalHours : defaultShiftHours);
                         let oHrs = (record.otHours || 0);
-                        
-                        // اگر پرانے ریکارڈ میں OT موجود ہے لیکن نارمل گھنٹے 10 لکھے ہیں تو اسے خود بخود 8 کر لیں
-                        if (oHrs > 0 && nHrs > 8) {
-                            nHrs = 8;
-                        }
+                        if (oHrs > 0 && nHrs > 8) nHrs = 8;
 
                         totalNormalHours += nHrs;
                         totalOtHours += oHrs;
@@ -387,9 +519,7 @@
                         : `<span class="bg-rose-50 text-rose-700 py-1 px-3 rounded-full text-xs font-semibold border border-rose-200">Absent</span>`;
 
                     let displayedNormalHrs = (record.normalHours !== undefined ? record.normalHours : defaultShiftHours);
-                    if ((record.otHours || 0) > 0 && displayedNormalHrs > 8) {
-                        displayedNormalHrs = 8;
-                    }
+                    if ((record.otHours || 0) > 0 && displayedNormalHrs > 8) displayedNormalHrs = 8;
 
                     const otDisplay = ((record.otHours || 0) > 0) ? `${record.otHours} Hrs` : `-`;
 
@@ -401,17 +531,27 @@
                         <td class="py-3.5 px-3 text-right text-xs text-gray-400">Recorded</td>
                     `;
                 } else {
-                    row.innerHTML = `
-                        <td class="py-3.5 px-3 text-gray-700 font-medium">${dateStr}</td>
-                        <td class="py-3.5 px-3"><span class="bg-amber-50 text-amber-700 py-1 px-3 rounded-full text-xs font-semibold border border-amber-200">Pending</span></td>
-                        <td class="py-3.5 px-3 text-gray-400">-</td>
-                        <td class="py-3.5 px-3 text-gray-400">-</td>
-                        <td class="py-3.5 px-3 text-right">
-                            <button onclick="openPromptForDate('${dateStr}')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-medium text-xs py-1.5 px-3 rounded-lg border border-indigo-200 transition">
-                                Mark Now
-                            </button>
-                        </td>
-                    `;
+                    if (isCurrentActive) {
+                        row.innerHTML = `
+                            <td class="py-3.5 px-3 text-gray-700 font-medium">${dateStr}</td>
+                            <td class="py-3.5 px-3"><span class="bg-amber-50 text-amber-700 py-1 px-3 rounded-full text-xs font-semibold border border-amber-200">Pending</span></td>
+                            <td class="py-3.5 px-3 text-gray-400">-</td>
+                            <td class="py-3.5 px-3 text-gray-400">-</td>
+                            <td class="py-3.5 px-3 text-right">
+                                <button onclick="openPromptForDate('${dateStr}')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-medium text-xs py-1.5 px-3 rounded-lg border border-indigo-200 transition">
+                                    Mark Now
+                                </button>
+                            </td>
+                        `;
+                    } else {
+                        row.innerHTML = `
+                            <td class="py-3.5 px-3 text-gray-700 font-medium">${dateStr}</td>
+                            <td class="py-3.5 px-3"><span class="bg-gray-100 text-gray-500 py-1 px-3 rounded-full text-xs font-semibold">Not Recorded</span></td>
+                            <td class="py-3.5 px-3 text-gray-400">-</td>
+                            <td class="py-3.5 px-3 text-gray-400">-</td>
+                            <td class="py-3.5 px-3 text-right text-xs text-gray-400">-</td>
+                        `;
+                    }
                 }
                 tableBody.appendChild(row);
             });
