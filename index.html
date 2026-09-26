@@ -807,7 +807,7 @@
             let tableRows = [];
             getDatesInRange(activeCycle.startDate, activeCycle.endDate, !viewingCustomCycle).forEach(dateStr => {
                 let rec = attendanceData[dateStr] || { status: 'Not Recorded', normalHours: 0, otHours: 0, remarks: '-' };
-                tableRows.push([dateStr, rec.status, `${rec.normalHours || 0} Hrs`, `${rec.otHours || 0} Hrs`, rec.remarks || '-'-]);
+                tableRows.push([dateStr, rec.status, `${rec.normalHours || 0} Hrs`, `${rec.otHours || 0} Hrs`, rec.remarks || '-']);
             });
 
             doc.autoTable({
