@@ -36,7 +36,7 @@
             <div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-start">
                 <!-- Main Header Logo -->
                 <div class="bg-gray-900 dark:bg-gray-700 p-2 rounded-xl shadow-inner border border-indigo-500/30 flex-shrink-0">
-                    <img src="https://i.ibb.co/6R2J3Z9/logo-placeholder.jpg" alt="MC SQUARE Logo" class="w-12 h-12 object-contain rounded-lg bg-white">
+                    <img src="https://i.ibb.co/6R2J3Z9/logo-placeholder.jpg" alt="MC SQUARE Logo" class="w-12 h-12 object-contain rounded-lg bg-white" id="main-logo-img">
                 </div>
                 <div>
                     <h1 class="text-xl sm:text-2xl font-extrabold text-gray-900 dark:text-white tracking-wide">MC SQUARE</h1>
@@ -76,7 +76,7 @@
                 <!-- Company Logo & Profile Card -->
                 <div class="bg-gradient-to-r from-gray-900 to-indigo-950 text-white p-4 rounded-2xl shadow-md space-y-2.5 text-center border border-indigo-500/30">
                     <div class="bg-white p-2.5 rounded-xl inline-block shadow-inner">
-                        <img src="https://i.ibb.co/6R2J3Z9/logo-placeholder.jpg" alt="MC SQUARE Logo" class="w-24 h-24 mx-auto object-contain rounded-lg">
+                        <img src="https://i.ibb.co/6R2J3Z9/logo-placeholder.jpg" alt="MC SQUARE Logo" class="w-24 h-24 mx-auto object-contain rounded-lg" id="sidebar-logo-img">
                     </div>
                     <div>
                         <span class="bg-indigo-600 text-white text-[10px] font-bold uppercase tracking-widest py-0.5 px-3 rounded-full">MC SQUARE GROUP</span>
@@ -333,6 +333,16 @@
         let expensesList = JSON.parse(localStorage.getItem('duty_expenses')) || [];
         let isDarkMode = localStorage.getItem('duty_dark_mode') === 'true';
 
+        // Direct Logo Image Link Fix
+        const companyLogoUrl = "https://chatgpt.com/c/73468.jpg";
+
+        function updateLogos() {
+            const mainLogo = document.getElementById('main-logo-img');
+            const sidebarLogo = document.getElementById('sidebar-logo-img');
+            if(mainLogo) mainLogo.src = companyLogoUrl;
+            if(sidebarLogo) sidebarLogo.src = companyLogoUrl;
+        }
+
         function getTodayDateString() {
             const now = new Date();
             const year = now.getFullYear();
@@ -492,6 +502,7 @@
 
         function initApp() {
             applyTheme();
+            updateLogos();
             const todayStr = getTodayDateString();
             document.getElementById('current-date').innerText = formatDisplayDate(todayStr);
             
