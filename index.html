@@ -116,6 +116,16 @@
                     </div>
                 </div>
 
+                <!-- Backup & Restore Data Feature -->
+                <div class="bg-gray-50 dark:bg-gray-700/50 p-3.5 rounded-xl border border-gray-200 dark:border-gray-700 space-y-2">
+                    <p class="text-xs font-bold text-gray-800 dark:text-gray-200">💾 Data Backup & Restore</p>
+                    <div class="flex gap-2">
+                        <button onclick="backupAppData()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold py-2 px-2 rounded-lg transition">Backup JSON</button>
+                        <button onclick="document.getElementById('restore-file-input').click()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold py-2 px-2 rounded-lg transition">Restore JSON</button>
+                        <input type="file" id="restore-file-input" accept=".json" class="hidden" onchange="restoreAppData(event)">
+                    </div>
+                </div>
+
                 <!-- Feature 1: Quick Duty Calculator -->
                 <div class="bg-gray-50 dark:bg-gray-700/50 p-3.5 rounded-xl border border-gray-200 dark:border-gray-700 space-y-2">
                     <p class="text-xs font-bold text-gray-800 dark:text-gray-200">🧮 Quick Duty Calculator</p>
@@ -334,17 +344,84 @@
         let viewingCustomCycle = null;
         let analyticsChartInstance = null;
 
-        let attendanceData = JSON.parse(localStorage.getItem('duty_attendance_data')) || {};
-        let defaultShiftHours = parseFloat(localStorage.getItem('duty_shift_hours')) || 10;
-        let cycleType = localStorage.getItem('duty_cycle_type') || '21_to_20';
-        let currencySymbol = localStorage.getItem('duty_currency') || 'AED';
-        let hourlyRate = parseFloat(localStorage.getItem('duty_hourly_rate')) || 0;
-        let otRate = parseFloat(localStorage.getItem('duty_ot_rate')) || 0;
-        let allowances = parseFloat(localStorage.getItem('duty_allowances')) || 0;
-        let otTargetHours = parseFloat(localStorage.getItem('duty_ot_target')) || 20;
-        let contactsList = JSON.parse(localStorage.getItem('duty_contacts')) || [];
-        let expensesList = JSON.parse(localStorage.getItem('duty_expenses')) || [];
-        let isDarkMode = localStorage.getItem('duty_dark_mode') === 'true';
+        // Load Initial State from LocalStorage with fallback defaults
+        let attendanceData = JSON.parse(localStorage.getItem('mcsquare_attendance')) || {};
+        let defaultShiftHours = parseFloat(localStorage.getItem('mcsquare_shift_hours')) || 10;
+        let cycleType = localStorage.getItem('mcsquare_cycle_type') || '21_to_20';
+        let currencySymbol = localStorage.getItem('mcsquare_currency') || 'AED';
+        let hourlyRate = parseFloat(localStorage.getItem('mcsquare_hourly_rate')) || 0;
+        let otRate = parseFloat(localStorage.getItem('mcsquare_ot_rate')) || 0;
+        let allowances = parseFloat(localStorage.getItem('mcsquare_allowances')) || 0;
+        let otTargetHours = parseFloat(localStorage.getItem('mcsquare_ot_target')) || 20;
+        let contactsList = JSON.parse(localStorage.getItem('mcsquare_contacts')) || [];
+        let expensesList = JSON.parse(localStorage.getItem('mcsquare_expenses')) || [];
+        let isDarkMode = localStorage.getItem('mcsquare_dark_mode') === 'true';
+
+        function saveAllToLocalStorage() {
+            localStorage.setItem('mcsquare_attendance', JSON.stringify(attendanceData));
+            localStorage.setItem('mcsquare_shift_hours', defaultShiftHours);
+            localStorage.setItem('mcsquare_cycle_type', cycleType);
+            localStorage.setItem('mcsquare_currency', currencySymbol);
+            localStorage.setItem('mcsquare_hourly_rate', hourlyRate);
+            localStorage.setItem('mcsquare_ot_rate', otRate);
+            localStorage.setItem('mcsquare_allowances', allowances);
+            localStorage.setItem('mcsquare_ot_target', otTargetHours);
+            localStorage.setItem('mcsquare_contacts', JSON.stringify(contactsList));
+            localStorage.setItem('mcsquare_expenses', JSON.stringify(expensesList));
+            localStorage.setItem('mcsquare_dark_mode', isDarkMode);
+        }
+
+        function backupAppData() {
+            const backupObj = {
+                attendanceData,
+                defaultShiftHours,
+                cycleType,
+                currencySymbol,
+                hourlyRate,
+                otRate,
+                allowances,
+                otTargetHours,
+                contactsList,
+                expensesList,
+                isDarkMode
+            };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupObj, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `mcsquare_timesheet_backup_${getTodayDateString()}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function restoreAppData(event) {
+            const fileReader = new FileReader();
+            if (event.target.files[0]) {
+                fileReader.readAsText(event.target.files[0], "UTF-8");
+                fileReader.onload = function (e) {
+                    try {
+                        const parsed = JSON.parse(e.target.result);
+                        if (parsed.attendanceData) attendanceData = parsed.attendanceData;
+                        if (parsed.defaultShiftHours !== undefined) defaultShiftHours = parsed.defaultShiftHours;
+                        if (parsed.cycleType) cycleType = parsed.cycleType;
+                        if (parsed.currencySymbol) currencySymbol = parsed.currencySymbol;
+                        if (parsed.hourlyRate !== undefined) hourlyRate = parsed.hourlyRate;
+                        if (parsed.otRate !== undefined) otRate = parsed.otRate;
+                        if (parsed.allowances !== undefined) allowances = parsed.allowances;
+                        if (parsed.otTargetHours !== undefined) otTargetHours = parsed.otTargetHours;
+                        if (parsed.contactsList) contactsList = parsed.contactsList;
+                        if (parsed.expensesList) expensesList = parsed.expensesList;
+                        if (parsed.isDarkMode !== undefined) isDarkMode = parsed.isDarkMode;
+
+                        saveAllToLocalStorage();
+                        alert("Data successfully restored from backup!");
+                        initApp();
+                    } catch (err) {
+                        alert("Error reading backup file. Please select a valid JSON file.");
+                    }
+                }
+            }
+        }
 
         function getTodayDateString() {
             const now = new Date();
@@ -362,7 +439,7 @@
 
         function toggleDarkMode() {
             isDarkMode = !isDarkMode;
-            localStorage.setItem('duty_dark_mode', isDarkMode);
+            saveAllToLocalStorage();
             applyTheme();
         }
 
@@ -412,7 +489,7 @@
                 return;
             }
             otTargetHours = val;
-            localStorage.setItem('duty_ot_target', otTargetHours);
+            saveAllToLocalStorage();
             alert("OT Target saved!");
             updateDashboardAndTable();
         }
@@ -425,7 +502,7 @@
                 return;
             }
             contactsList.push({ name, phone });
-            localStorage.setItem('duty_contacts', JSON.stringify(contactsList));
+            saveAllToLocalStorage();
             document.getElementById('contact-name').value = '';
             document.getElementById('contact-phone').value = '';
             renderContacts();
@@ -448,7 +525,7 @@
 
         function deleteContact(idx) {
             contactsList.splice(idx, 1);
-            localStorage.setItem('duty_contacts', JSON.stringify(contactsList));
+            saveAllToLocalStorage();
             renderContacts();
         }
 
@@ -460,7 +537,7 @@
                 return;
             }
             expensesList.push({ title, amount });
-            localStorage.setItem('duty_expenses', JSON.stringify(expensesList));
+            saveAllToLocalStorage();
             document.getElementById('expense-title').value = '';
             document.getElementById('expense-amount').value = '';
             renderExpenses();
@@ -560,13 +637,7 @@
             otRate = parseFloat(document.getElementById('ot-rate-input').value) || 0;
             allowances = parseFloat(document.getElementById('allowance-input').value) || 0;
 
-            localStorage.setItem('duty_shift_hours', defaultShiftHours);
-            localStorage.setItem('duty_cycle_type', cycleType);
-            localStorage.setItem('duty_currency', currencySymbol);
-            localStorage.setItem('duty_hourly_rate', hourlyRate);
-            localStorage.setItem('duty_ot_rate', otRate);
-            localStorage.setItem('duty_allowances', allowances);
-
+            saveAllToLocalStorage();
             alert("Advanced settings saved successfully!");
             initApp();
         }
@@ -593,7 +664,7 @@
                 };
             }
 
-            localStorage.setItem('duty_attendance_data', JSON.stringify(attendanceData));
+            saveAllToLocalStorage();
             document.getElementById('daily-prompt-card').classList.add('hidden');
             selectedDateToMark = null;
             initApp();
