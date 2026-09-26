@@ -50,7 +50,7 @@
                 </button>
                 <button onclick="exportToExcel()" class="bg-emerald-50 dark:bg-emerald-900/30 hover:bg-emerald-100 text-emerald-700 dark:text-emerald-300 font-medium text-xs py-2 px-2.5 rounded-xl border border-emerald-200 dark:border-emerald-800 transition">Excel</button>
                 <button onclick="exportToPDF()" class="bg-rose-50 dark:bg-rose-900/30 hover:bg-rose-100 text-rose-700 dark:text-rose-300 font-medium text-xs py-2 px-2.5 rounded-xl border border-rose-200 dark:border-rose-800 transition">PDF</button>
-                <button onclick="toggleSidebar(true)" class="hidden sm:flex bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 py-2 px-3 rounded-xl text-xs font-semibold text-gray-700 dark:text-gray-200 items-center gap-1.5 transition">History & Goals</button>
+                <button onclick="toggleSidebar(true)" class="hidden sm:flex bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 py-2 px-3 rounded-xl text-xs font-semibold text-gray-700 dark:text-gray-200 items-center gap-1.5 transition">Menu & Tools</button>
                 <div class="text-right border-l pl-3 border-gray-200 dark:border-gray-700">
                     <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Today</p>
                     <p class="text-sm font-semibold text-gray-800 dark:text-gray-200" id="current-date"></p>
@@ -58,37 +58,88 @@
             </div>
         </header>
 
-        <!-- Sidebar / Drawer for History & Monthly Goal -->
+        <!-- Sidebar / Drawer -->
         <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-50 hidden transition-opacity opacity-0" onclick="toggleSidebar(false)"></div>
-        <div id="sidebar-drawer" class="fixed top-0 right-0 h-full w-80 sm:w-96 bg-white dark:bg-gray-800 z-50 shadow-2xl p-6 transform translate-x-full transition-transform duration-300 flex flex-col">
+        <div id="sidebar-drawer" class="fixed top-0 right-0 h-full w-80 sm:w-96 bg-white dark:bg-gray-800 z-50 shadow-2xl p-6 transform translate-x-full transition-transform duration-300 flex flex-col overflow-y-auto">
             <div class="flex justify-between items-center border-b border-gray-100 dark:border-gray-700 pb-4 mb-4">
-                <h2 class="text-lg font-bold text-gray-900 dark:text-white">Past Records & Goals</h2>
+                <h2 class="text-lg font-bold text-gray-900 dark:text-white">Quick Tools & Menu</h2>
                 <button onclick="toggleSidebar(false)" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1 rounded-lg">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
             
-            <!-- Monthly Goal & Target Tracker -->
-            <div class="bg-indigo-50/60 dark:bg-indigo-950/40 p-3.5 rounded-xl border border-indigo-100 dark:border-indigo-900 mb-4 space-y-2">
-                <p class="text-xs font-bold text-indigo-900 dark:text-indigo-300">🎯 Monthly Target Goal</p>
-                <div>
-                    <label class="block text-[11px] text-gray-600 dark:text-gray-400 mb-1">Target Working Days</label>
-                    <div class="flex gap-2">
-                        <input type="number" id="target-days-input" min="1" max="31" class="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-bold text-center py-1 px-2 rounded-lg text-xs" value="26">
-                        <button onclick="saveMonthlyTarget()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold py-1 px-3 rounded-lg transition">Save</button>
+            <div class="space-y-5">
+                <!-- Company Profile Card -->
+                <div class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white p-4 rounded-2xl shadow-sm space-y-1.5 text-center">
+                    <span class="bg-white/20 text-[10px] font-bold uppercase tracking-wider py-0.5 px-2.5 rounded-full">Official Company</span>
+                    <h3 class="text-lg font-extrabold tracking-wide mt-1">MC SQUARE</h3>
+                    <p class="text-xs font-semibold text-indigo-100">Owner: SIR RAJA NABEEL SAHAB</p>
+                    <div class="pt-1">
+                        <a href="tel:+971504295807" class="inline-flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-medium py-1 px-3 rounded-lg transition border border-white/20">
+                            📞 +971 50 429 5807
+                        </a>
                     </div>
                 </div>
-                <div class="pt-1">
-                    <p class="text-[11px] text-gray-600 dark:text-gray-400">Progress: <span id="target-progress-text" class="font-bold text-indigo-600 dark:text-indigo-400">0 / 26 Days</span></p>
-                    <div class="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full mt-1 overflow-hidden">
-                        <div id="target-progress-bar" class="bg-indigo-600 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
-                    </div>
-                </div>
-            </div>
 
-            <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Select a past timesheet cycle:</p>
-            <div id="past-months-container" class="flex-1 overflow-y-auto space-y-3 pr-1">
-                <!-- Past months dynamically loaded -->
+                <!-- Feature 1: Quick Duty Calculator -->
+                <div class="bg-gray-50 dark:bg-gray-700/50 p-3.5 rounded-xl border border-gray-200 dark:border-gray-700 space-y-2">
+                    <p class="text-xs font-bold text-gray-800 dark:text-gray-200">🧮 Quick Duty Calculator</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="number" id="quick-calc-hours" placeholder="Hours" class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-xs py-1.5 px-2 rounded-lg text-center" value="10">
+                        <button onclick="calculateQuickPay()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold py-1.5 px-2 rounded-lg transition">Calculate</button>
+                    </div>
+                    <p class="text-xs text-indigo-600 dark:text-indigo-400 font-semibold text-center" id="quick-calc-result">Estimated Pay: 0</p>
+                </div>
+
+                <!-- Feature 2: Overtime Target Goal Meter -->
+                <div class="bg-gray-50 dark:bg-gray-700/50 p-3.5 rounded-xl border border-gray-200 dark:border-gray-700 space-y-2">
+                    <p class="text-xs font-bold text-gray-800 dark:text-gray-200">⏱️ Overtime Target (Hours)</p>
+                    <div class="flex gap-2">
+                        <input type="number" id="ot-target-input" min="1" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-xs py-1 px-2 rounded-lg text-center" value="20">
+                        <button onclick="saveOTTarget()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold py-1 px-3 rounded-lg transition">Set</button>
+                    </div>
+                    <div>
+                        <p class="text-[11px] text-gray-600 dark:text-gray-400">OT Progress: <span id="ot-progress-text" class="font-bold text-amber-600">0 / 20 Hrs</span></p>
+                        <div class="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full mt-1 overflow-hidden">
+                            <div id="ot-progress-bar" class="bg-amber-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 3: Important Contacts / Helpline -->
+                <div class="bg-gray-50 dark:bg-gray-700/50 p-3.5 rounded-xl border border-gray-200 dark:border-gray-700 space-y-2">
+                    <p class="text-xs font-bold text-gray-800 dark:text-gray-200">📞 Company Contacts</p>
+                    <input type="text" id="contact-name" placeholder="Name (e.g. HR / Supervisor)" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-xs py-1.5 px-2 rounded-lg mb-1">
+                    <div class="flex gap-2">
+                        <input type="text" id="contact-phone" placeholder="Phone Number" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-xs py-1.5 px-2 rounded-lg">
+                        <button onclick="saveContact()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold py-1.5 px-3 rounded-lg transition">Save</button>
+                    </div>
+                    <div id="contacts-list" class="space-y-1 pt-1 text-xs max-h-24 overflow-y-auto">
+                        <!-- Saved contacts will show here -->
+                    </div>
+                </div>
+
+                <!-- Feature 4: Monthly Expenses Quick Log -->
+                <div class="bg-gray-50 dark:bg-gray-700/50 p-3.5 rounded-xl border border-gray-200 dark:border-gray-700 space-y-2">
+                    <p class="text-xs font-bold text-gray-800 dark:text-gray-200">💸 Monthly Expenses Log</p>
+                    <input type="text" id="expense-title" placeholder="Expense (e.g. Food / Transport)" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-xs py-1.5 px-2 rounded-lg mb-1">
+                    <div class="flex gap-2">
+                        <input type="number" id="expense-amount" placeholder="Amount" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-xs py-1.5 px-2 rounded-lg">
+                        <button onclick="addExpense()" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold py-1.5 px-3 rounded-lg transition">Add</button>
+                    </div>
+                    <div class="flex justify-between items-center text-xs font-bold pt-1 border-t border-gray-200 dark:border-gray-600">
+                        <span>Total Expenses:</span>
+                        <span id="total-expenses-val" class="text-rose-600">0</span>
+                    </div>
+                </div>
+
+                <!-- Past Cycles Section -->
+                <div>
+                    <p class="text-xs font-bold text-gray-800 dark:text-gray-200 mb-2">📂 Past Timesheet Cycles</p>
+                    <div id="past-months-container" class="space-y-2">
+                        <!-- Past months dynamically loaded -->
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -255,7 +306,9 @@
         let hourlyRate = parseFloat(localStorage.getItem('duty_hourly_rate')) || 0;
         let otRate = parseFloat(localStorage.getItem('duty_ot_rate')) || 0;
         let allowances = parseFloat(localStorage.getItem('duty_allowances')) || 0;
-        let monthlyTargetDays = parseInt(localStorage.getItem('duty_monthly_target')) || 26;
+        let otTargetHours = parseFloat(localStorage.getItem('duty_ot_target')) || 20;
+        let contactsList = JSON.parse(localStorage.getItem('duty_contacts')) || [];
+        let expensesList = JSON.parse(localStorage.getItem('duty_expenses')) || [];
         let isDarkMode = localStorage.getItem('duty_dark_mode') === 'true';
 
         function getTodayDateString() {
@@ -311,16 +364,77 @@
             }
         }
 
-        function saveMonthlyTarget() {
-            const val = parseInt(document.getElementById('target-days-input').value);
+        function calculateQuickPay() {
+            const hrs = parseFloat(document.getElementById('quick-calc-hours').value) || 0;
+            const pay = hrs * hourlyRate;
+            document.getElementById('quick-calc-result').innerText = `Estimated Pay: ${pay.toFixed(2)} ${currencySymbol}`;
+        }
+
+        function saveOTTarget() {
+            const val = parseFloat(document.getElementById('ot-target-input').value);
             if (isNaN(val) || val <= 0) {
-                alert("Please enter a valid target number of days.");
+                alert("Please enter a valid OT target.");
                 return;
             }
-            monthlyTargetDays = val;
-            localStorage.setItem('duty_monthly_target', monthlyTargetDays);
-            alert("Monthly target saved successfully!");
+            otTargetHours = val;
+            localStorage.setItem('duty_ot_target', otTargetHours);
+            alert("OT Target saved!");
             updateDashboardAndTable();
+        }
+
+        function saveContact() {
+            const name = document.getElementById('contact-name').value.trim();
+            const phone = document.getElementById('contact-phone').value.trim();
+            if (!name || !phone) {
+                alert("Please enter both name and phone number.");
+                return;
+            }
+            contactsList.push({ name, phone });
+            localStorage.setItem('duty_contacts', JSON.stringify(contactsList));
+            document.getElementById('contact-name').value = '';
+            document.getElementById('contact-phone').value = '';
+            renderContacts();
+        }
+
+        function renderContacts() {
+            const container = document.getElementById('contacts-list');
+            container.innerHTML = '';
+            if (contactsList.length === 0) {
+                container.innerHTML = `<p class="text-gray-400 text-[11px]">No saved contacts.</p>`;
+                return;
+            }
+            contactsList.forEach((c, idx) => {
+                let div = document.createElement('div');
+                div.className = "flex justify-between items-center bg-white dark:bg-gray-800 p-1.5 rounded border border-gray-200 dark:border-gray-700";
+                div.innerHTML = `<span><b>${c.name}</b>: ${c.phone}</span> <button onclick="deleteContact(${idx})" class="text-rose-500 hover:text-rose-700 font-bold px-1">&times;</button>`;
+                container.appendChild(div);
+            });
+        }
+
+        function deleteContact(idx) {
+            contactsList.splice(idx, 1);
+            localStorage.setItem('duty_contacts', JSON.stringify(contactsList));
+            renderContacts();
+        }
+
+        function addExpense() {
+            const title = document.getElementById('expense-title').value.trim();
+            const amount = parseFloat(document.getElementById('expense-amount').value);
+            if (!title || isNaN(amount)) {
+                alert("Please enter valid expense title and amount.");
+                return;
+            }
+            expensesList.push({ title, amount });
+            localStorage.setItem('duty_expenses', JSON.stringify(expensesList));
+            document.getElementById('expense-title').value = '';
+            document.getElementById('expense-amount').value = '';
+            renderExpenses();
+        }
+
+        function renderExpenses() {
+            let total = 0;
+            expensesList.forEach(e => total += e.amount);
+            document.getElementById('total-expenses-val').innerText = `${total.toFixed(2)} ${currencySymbol}`;
         }
 
         function getCurrentActiveCycle(cType) {
@@ -365,8 +479,11 @@
             document.getElementById('hourly-rate-input').value = hourlyRate;
             document.getElementById('ot-rate-input').value = otRate;
             document.getElementById('allowance-input').value = allowances;
-            document.getElementById('target-days-input').value = monthlyTargetDays;
+            document.getElementById('ot-target-input').value = otTargetHours;
             
+            renderContacts();
+            renderExpenses();
+
             const cycleText = cycleType === '21_to_20' ? 'Timesheet Cycle: 21st to 20th' : 'Timesheet Cycle: 1st to End of Month';
             document.getElementById('header-cycle-label').innerText = cycleText;
 
@@ -570,10 +687,9 @@
                 tableBody.appendChild(row);
             });
 
-            // Update Target Progress Bar
-            let progressPercent = Math.min(100, Math.round((totalPresent / monthlyTargetDays) * 100));
-            document.getElementById('target-progress-text').innerText = `${totalPresent} / ${monthlyTargetDays} Days`;
-            document.getElementById('target-progress-bar').style.width = `${progressPercent}%`;
+            let otProgressPercent = Math.min(100, Math.round((totalOtHours / otTargetHours) * 100));
+            document.getElementById('ot-progress-text').innerText = `${totalOtHours} / ${otTargetHours} Hrs`;
+            document.getElementById('ot-progress-bar').style.width = `${otProgressPercent}%`;
 
             let normalEarnings = totalNormalHours * hourlyRate;
             let otEarnings = (totalOtHours * otRate) + allowances;
@@ -623,7 +739,7 @@
             
             let allDates = Object.keys(attendanceData).sort().reverse();
             if (allDates.length === 0) {
-                container.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">No past records available.</p>`;
+                container.innerHTML = `<p class="text-xs text-gray-400 text-center py-2">No past records available.</p>`;
                 return;
             }
 
@@ -647,16 +763,16 @@
 
             let sortedKeys = Object.keys(cyclesMap).sort().reverse();
             if (sortedKeys.length === 0) {
-                container.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">No past records available.</p>`;
+                container.innerHTML = `<p class="text-xs text-gray-400 text-center py-2">No past records available.</p>`;
                 return;
             }
 
             sortedKeys.forEach(key => {
                 let range = cyclesMap[key];
                 let btn = document.createElement('button');
-                btn.className = "w-full text-left bg-gray-50 dark:bg-gray-700 hover:bg-indigo-50 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 p-3 rounded-xl transition flex justify-between items-center";
+                btn.className = "w-full text-left bg-gray-50 dark:bg-gray-700 hover:bg-indigo-50 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 p-2.5 rounded-xl transition flex justify-between items-center";
                 btn.onclick = () => { viewingCustomCycle = range; toggleSidebar(false); updateDashboardAndTable(); };
-                btn.innerHTML = `<div><p class="text-xs font-bold text-gray-800 dark:text-gray-200">${range.title}</p><p class="text-[11px] text-gray-500 dark:text-gray-400">${range.startDate} to ${range.endDate}</p></div><svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>`;
+                btn.innerHTML = `<div><p class="text-xs font-bold text-gray-800 dark:text-gray-200">${range.title}</p><p class="text-[10px] text-gray-500 dark:text-gray-400">${range.startDate} to ${range.endDate}</p></div><svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>`;
                 container.appendChild(btn);
             });
         }
@@ -691,7 +807,7 @@
             let tableRows = [];
             getDatesInRange(activeCycle.startDate, activeCycle.endDate, !viewingCustomCycle).forEach(dateStr => {
                 let rec = attendanceData[dateStr] || { status: 'Not Recorded', normalHours: 0, otHours: 0, remarks: '-' };
-                tableRows.push([dateStr, rec.status, `${rec.normalHours || 0} Hrs`, `${rec.otHours || 0} Hrs`, rec.remarks || '-']);
+                tableRows.push([dateStr, rec.status, `${rec.normalHours || 0} Hrs`, `${rec.otHours || 0} Hrs`, rec.remarks || '-'-]);
             });
 
             doc.autoTable({
