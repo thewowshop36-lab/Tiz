@@ -37,13 +37,9 @@
                 <!-- Original Logo Graphic -->
                 <div class="bg-white p-2 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex items-center justify-center flex-shrink-0">
                     <svg viewBox="0 0 240 100" class="w-16 h-12 object-contain">
-                        <!-- GROUP vertical text -->
                         <text x="6" y="78" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#333" letter-spacing="3" transform="rotate(-90, 6, 78)">GROUP</text>
-                        <!-- M letter -->
                         <path d="M 22 85 L 22 25 L 55 58 L 88 25 L 88 85" fill="none" stroke="#111" stroke-width="12" stroke-linejoin="miter"/>
-                        <!-- C letter -->
                         <path d="M 140 23 C 110 23, 98 40, 98 55 C 98 72, 115 87, 145 87" fill="none" stroke="#111" stroke-width="12" stroke-linecap="round"/>
-                        <!-- 2 and TM Box -->
                         <rect x="175" y="15" width="30" height="25" fill="#d4af37" rx="2"/>
                         <text x="183" y="34" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#fff">2</text>
                         <text x="210" y="20" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#666">TM</text>
@@ -186,7 +182,7 @@
         <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
                 <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Default Duty Hours</label>
-                <input type="number" id="shift-hours-input" step="0.5" min="1" max="24" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-bold text-center py-2 px-3 rounded-xl focus:ring-2 focus:ring-indigo-500 text-sm" value="10">
+                <input type="number" id="shift-hours-input" step="0.5" min="1" max="24" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-bold text-center py-2 px-3 rounded-xl focus:ring-2 focus:ring-indigo-500 text-sm">
             </div>
             <div>
                 <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Timesheet Cycle</label>
@@ -197,19 +193,19 @@
             </div>
             <div>
                 <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Currency Symbol</label>
-                <input type="text" id="currency-input" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-bold text-center py-2 px-3 rounded-xl focus:ring-2 focus:ring-indigo-500 text-sm" value="AED">
+                <input type="text" id="currency-input" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-bold text-center py-2 px-3 rounded-xl focus:ring-2 focus:ring-indigo-500 text-sm">
             </div>
             <div>
                 <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Hourly Rate (Normal)</label>
-                <input type="number" id="hourly-rate-input" step="0.5" min="0" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-bold text-center py-2 px-3 rounded-xl focus:ring-2 focus:ring-indigo-500 text-sm" value="0">
+                <input type="number" id="hourly-rate-input" step="0.5" min="0" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-bold text-center py-2 px-3 rounded-xl focus:ring-2 focus:ring-indigo-500 text-sm">
             </div>
             <div>
                 <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Overtime Hourly Rate</label>
-                <input type="number" id="ot-rate-input" step="0.5" min="0" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-bold text-center py-2 px-3 rounded-xl focus:ring-2 focus:ring-indigo-500 text-sm" value="0">
+                <input type="number" id="ot-rate-input" step="0.5" min="0" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-bold text-center py-2 px-3 rounded-xl focus:ring-2 focus:ring-indigo-500 text-sm">
             </div>
             <div>
                 <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Allowances / Advance</label>
-                <input type="number" id="allowance-input" step="1" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-bold text-center py-2 px-3 rounded-xl focus:ring-2 focus:ring-indigo-500 text-sm" value="0">
+                <input type="number" id="allowance-input" step="1" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-bold text-center py-2 px-3 rounded-xl focus:ring-2 focus:ring-indigo-500 text-sm">
             </div>
             <div class="sm:col-span-3 flex justify-between items-center">
                 <button onclick="requestNotificationPermission()" class="text-xs text-indigo-600 dark:text-indigo-400 font-semibold hover:underline flex items-center gap-1">
