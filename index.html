@@ -115,7 +115,6 @@
                 <input type="number" id="allowance-input" step="1" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-bold text-center py-2 px-3 rounded-xl focus:ring-2 focus:ring-indigo-500 text-sm" value="0">
             </div>
             <div class="sm:col-span-3 flex justify-between items-center">
-                <!-- Daily Notification Permission Button -->
                 <button onclick="requestNotificationPermission()" class="text-xs text-indigo-600 dark:text-indigo-400 font-semibold hover:underline flex items-center gap-1">
                     🔔 Enable Daily Reminder Notification
                 </button>
@@ -287,7 +286,7 @@
             }
             Notification.requestPermission().then(permission => {
                 if (permission === "granted") {
-                    alert("Notifications enabled successfully! You will receive daily check-in reminders.");
+                    alert("Notifications enabled successfully!");
                     new Notification("Duty & Attendance Tracker", { body: "Daily reminder notifications are now active!" });
                 } else {
                     alert("Permission denied for notifications.");
@@ -595,21 +594,38 @@
         function buildPastMonthsList() {
             const container = document.getElementById('past-months-container');
             container.innerHTML = '';
-            let dates = Object.keys(attendanceData).sort().reverse();
-            if (dates.length === 0) {
+            
+            let allDates = Object.keys(attendanceData).sort().reverse();
+            if (allDates.length === 0) {
                 container.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">No past records available.</p>`;
                 return;
             }
+
             let cyclesMap = {};
-            dates.forEach(dateStr => {
-                let [y, m, d] = dateStr.split('-').map(Number);
-                let key = `${y}-${String(m).padStart(2, '0')}`;
+            allDates.forEach(dateStr => {
+                if (!dateStr || dateStr.split('-').length !== 3) return;
+                let [y, m] = dateStr.split('-');
+                let key = `${y}-${m}`;
                 if (!cyclesMap[key]) {
                     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                    cyclesMap[key] = { title: `${monthNames[m-1]} ${y}`, startDate: `${y}-${String(m).padStart(2, '0')}-01`, endDate: `${y}-${String(m).padStart(2, '0')}-${new Date(y, m, 0).getDate()}` };
+                    let monthIndex = parseInt(m, 10) - 1;
+                    let monthName = monthNames[monthIndex] || m;
+                    let lastDay = new Date(parseInt(y), parseInt(m), 0).getDate();
+                    cyclesMap[key] = { 
+                        title: `${monthName} ${y}`, 
+                        startDate: `${y}-${m}-01`, 
+                        endDate: `${y}-${m}-${lastDay}` 
+                    };
                 }
             });
-            Object.keys(cyclesMap).sort().reverse().forEach(key => {
+
+            let sortedKeys = Object.keys(cyclesMap).sort().reverse();
+            if (sortedKeys.length === 0) {
+                container.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">No past records available.</p>`;
+                return;
+            }
+
+            sortedKeys.forEach(key => {
                 let range = cyclesMap[key];
                 let btn = document.createElement('button');
                 btn.className = "w-full text-left bg-gray-50 dark:bg-gray-700 hover:bg-indigo-50 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 p-3 rounded-xl transition flex justify-between items-center";
