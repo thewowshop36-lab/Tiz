@@ -31,12 +31,13 @@
 
     <div class="max-w-4xl mx-auto space-y-6">
         
-        <!-- Header with Logo -->
+        <!-- Header with Stylish Logo Badge -->
         <header class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-start">
-                <!-- Main Header Logo -->
-                <div class="bg-gray-900 dark:bg-gray-700 p-2 rounded-xl shadow-inner border border-indigo-500/30 flex-shrink-0">
-                    <img src="https://i.ibb.co/6R2J3Z9/logo-placeholder.jpg" alt="MC SQUARE Logo" class="w-12 h-12 object-contain rounded-lg bg-white" id="main-logo-img">
+                <!-- Professional Custom Logo Badge -->
+                <div class="bg-gradient-to-br from-indigo-600 to-purple-700 text-white p-3 rounded-xl shadow-md border border-indigo-400/30 flex flex-col items-center justify-center flex-shrink-0 w-14 h-14">
+                    <span class="text-xs font-black tracking-tighter leading-none">MC</span>
+                    <span class="text-[10px] font-bold tracking-widest bg-white/20 px-1 rounded mt-0.5">SQ²</span>
                 </div>
                 <div>
                     <h1 class="text-xl sm:text-2xl font-extrabold text-gray-900 dark:text-white tracking-wide">MC SQUARE</h1>
@@ -73,10 +74,11 @@
             </div>
             
             <div class="space-y-5">
-                <!-- Company Logo & Profile Card -->
+                <!-- Company Profile Card with Styled Badge -->
                 <div class="bg-gradient-to-r from-gray-900 to-indigo-950 text-white p-4 rounded-2xl shadow-md space-y-2.5 text-center border border-indigo-500/30">
-                    <div class="bg-white p-2.5 rounded-xl inline-block shadow-inner">
-                        <img src="https://i.ibb.co/6R2J3Z9/logo-placeholder.jpg" alt="MC SQUARE Logo" class="w-24 h-24 mx-auto object-contain rounded-lg" id="sidebar-logo-img">
+                    <div class="bg-gradient-to-br from-indigo-600 to-purple-700 text-white p-3 rounded-2xl inline-flex flex-col items-center justify-center shadow-inner w-16 h-16 mx-auto border border-white/20">
+                        <span class="text-sm font-black tracking-tighter leading-none">MC</span>
+                        <span class="text-[11px] font-bold tracking-widest bg-white/20 px-1.5 rounded mt-0.5">SQ²</span>
                     </div>
                     <div>
                         <span class="bg-indigo-600 text-white text-[10px] font-bold uppercase tracking-widest py-0.5 px-3 rounded-full">MC SQUARE GROUP</span>
@@ -333,16 +335,6 @@
         let expensesList = JSON.parse(localStorage.getItem('duty_expenses')) || [];
         let isDarkMode = localStorage.getItem('duty_dark_mode') === 'true';
 
-        // Direct Logo Image Link Fix
-        const companyLogoUrl = "https://chatgpt.com/c/73468.jpg";
-
-        function updateLogos() {
-            const mainLogo = document.getElementById('main-logo-img');
-            const sidebarLogo = document.getElementById('sidebar-logo-img');
-            if(mainLogo) mainLogo.src = companyLogoUrl;
-            if(sidebarLogo) sidebarLogo.src = companyLogoUrl;
-        }
-
         function getTodayDateString() {
             const now = new Date();
             const year = now.getFullYear();
@@ -502,7 +494,6 @@
 
         function initApp() {
             applyTheme();
-            updateLogos();
             const todayStr = getTodayDateString();
             document.getElementById('current-date').innerText = formatDisplayDate(todayStr);
             
