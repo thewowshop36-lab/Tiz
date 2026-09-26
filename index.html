@@ -50,7 +50,7 @@
                 </button>
                 <button onclick="exportToExcel()" class="bg-emerald-50 dark:bg-emerald-900/30 hover:bg-emerald-100 text-emerald-700 dark:text-emerald-300 font-medium text-xs py-2 px-2.5 rounded-xl border border-emerald-200 dark:border-emerald-800 transition">Excel</button>
                 <button onclick="exportToPDF()" class="bg-rose-50 dark:bg-rose-900/30 hover:bg-rose-100 text-rose-700 dark:text-rose-300 font-medium text-xs py-2 px-2.5 rounded-xl border border-rose-200 dark:border-rose-800 transition">PDF</button>
-                <button onclick="toggleSidebar(true)" class="hidden sm:flex bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 py-2 px-3 rounded-xl text-xs font-semibold text-gray-700 dark:text-gray-200 items-center gap-1.5 transition">History & Backup</button>
+                <button onclick="toggleSidebar(true)" class="hidden sm:flex bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 py-2 px-3 rounded-xl text-xs font-semibold text-gray-700 dark:text-gray-200 items-center gap-1.5 transition">History & Goals</button>
                 <div class="text-right border-l pl-3 border-gray-200 dark:border-gray-700">
                     <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Today</p>
                     <p class="text-sm font-semibold text-gray-800 dark:text-gray-200" id="current-date"></p>
@@ -58,24 +58,31 @@
             </div>
         </header>
 
-        <!-- Sidebar / Drawer for History & Backup -->
+        <!-- Sidebar / Drawer for History & Monthly Goal -->
         <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-50 hidden transition-opacity opacity-0" onclick="toggleSidebar(false)"></div>
         <div id="sidebar-drawer" class="fixed top-0 right-0 h-full w-80 sm:w-96 bg-white dark:bg-gray-800 z-50 shadow-2xl p-6 transform translate-x-full transition-transform duration-300 flex flex-col">
             <div class="flex justify-between items-center border-b border-gray-100 dark:border-gray-700 pb-4 mb-4">
-                <h2 class="text-lg font-bold text-gray-900 dark:text-white">Past Records & Backup</h2>
+                <h2 class="text-lg font-bold text-gray-900 dark:text-white">Past Records & Goals</h2>
                 <button onclick="toggleSidebar(false)" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1 rounded-lg">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
             
-            <!-- Backup / Restore Actions -->
+            <!-- Monthly Goal & Target Tracker -->
             <div class="bg-indigo-50/60 dark:bg-indigo-950/40 p-3.5 rounded-xl border border-indigo-100 dark:border-indigo-900 mb-4 space-y-2">
-                <p class="text-xs font-bold text-indigo-900 dark:text-indigo-300">Data Backup & Restore</p>
-                <div class="flex gap-2">
-                    <button onclick="exportJSONBackup()" class="flex-1 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 text-indigo-600 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-xs font-semibold py-1.5 px-2 rounded-lg transition">Export JSON</button>
-                    <label class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold py-1.5 px-2 rounded-lg transition text-center cursor-pointer">
-                        Import JSON <input type="file" id="import-file" class="hidden" accept=".json" onchange="importJSONBackup(event)">
-                    </label>
+                <p class="text-xs font-bold text-indigo-900 dark:text-indigo-300">🎯 Monthly Target Goal</p>
+                <div>
+                    <label class="block text-[11px] text-gray-600 dark:text-gray-400 mb-1">Target Working Days</label>
+                    <div class="flex gap-2">
+                        <input type="number" id="target-days-input" min="1" max="31" class="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-bold text-center py-1 px-2 rounded-lg text-xs" value="26">
+                        <button onclick="saveMonthlyTarget()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold py-1 px-3 rounded-lg transition">Save</button>
+                    </div>
+                </div>
+                <div class="pt-1">
+                    <p class="text-[11px] text-gray-600 dark:text-gray-400">Progress: <span id="target-progress-text" class="font-bold text-indigo-600 dark:text-indigo-400">0 / 26 Days</span></p>
+                    <div class="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full mt-1 overflow-hidden">
+                        <div id="target-progress-bar" class="bg-indigo-600 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
                 </div>
             </div>
 
@@ -248,6 +255,7 @@
         let hourlyRate = parseFloat(localStorage.getItem('duty_hourly_rate')) || 0;
         let otRate = parseFloat(localStorage.getItem('duty_ot_rate')) || 0;
         let allowances = parseFloat(localStorage.getItem('duty_allowances')) || 0;
+        let monthlyTargetDays = parseInt(localStorage.getItem('duty_monthly_target')) || 26;
         let isDarkMode = localStorage.getItem('duty_dark_mode') === 'true';
 
         function getTodayDateString() {
@@ -303,6 +311,18 @@
             }
         }
 
+        function saveMonthlyTarget() {
+            const val = parseInt(document.getElementById('target-days-input').value);
+            if (isNaN(val) || val <= 0) {
+                alert("Please enter a valid target number of days.");
+                return;
+            }
+            monthlyTargetDays = val;
+            localStorage.setItem('duty_monthly_target', monthlyTargetDays);
+            alert("Monthly target saved successfully!");
+            updateDashboardAndTable();
+        }
+
         function getCurrentActiveCycle(cType) {
             const now = new Date();
             let y = now.getFullYear();
@@ -345,6 +365,7 @@
             document.getElementById('hourly-rate-input').value = hourlyRate;
             document.getElementById('ot-rate-input').value = otRate;
             document.getElementById('allowance-input').value = allowances;
+            document.getElementById('target-days-input').value = monthlyTargetDays;
             
             const cycleText = cycleType === '21_to_20' ? 'Timesheet Cycle: 21st to 20th' : 'Timesheet Cycle: 1st to End of Month';
             document.getElementById('header-cycle-label').innerText = cycleText;
@@ -549,6 +570,11 @@
                 tableBody.appendChild(row);
             });
 
+            // Update Target Progress Bar
+            let progressPercent = Math.min(100, Math.round((totalPresent / monthlyTargetDays) * 100));
+            document.getElementById('target-progress-text').innerText = `${totalPresent} / ${monthlyTargetDays} Days`;
+            document.getElementById('target-progress-bar').style.width = `${progressPercent}%`;
+
             let normalEarnings = totalNormalHours * hourlyRate;
             let otEarnings = (totalOtHours * otRate) + allowances;
             let netSalary = normalEarnings + otEarnings;
@@ -674,38 +700,6 @@
                 body: tableRows,
             });
             doc.save(`Timesheet_${activeCycle.startDate}_to_${activeCycle.endDate}.pdf`);
-        }
-
-        function exportJSONBackup() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(attendanceData));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `attendance_backup_${getTodayDateString()}.json`);
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-        }
-
-        function importJSONBackup(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const imported = JSON.parse(e.target.result);
-                    if (imported && typeof imported === 'object') {
-                        attendanceData = imported;
-                        localStorage.setItem('duty_attendance_data', JSON.stringify(attendanceData));
-                        alert("Backup restored successfully!");
-                        initApp();
-                    } else {
-                        alert("Invalid backup file.");
-                    }
-                } catch(err) {
-                    alert("Error parsing JSON file.");
-                }
-            };
-            reader.readAsText(file);
         }
 
         window.onload = initApp;
