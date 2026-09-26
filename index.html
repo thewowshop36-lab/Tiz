@@ -344,7 +344,6 @@
         let viewingCustomCycle = null;
         let analyticsChartInstance = null;
 
-        // Load Initial State from LocalStorage with fallback defaults
         let attendanceData = JSON.parse(localStorage.getItem('mcsquare_attendance')) || {};
         let defaultShiftHours = parseFloat(localStorage.getItem('mcsquare_shift_hours')) || 10;
         let cycleType = localStorage.getItem('mcsquare_cycle_type') || '21_to_20';
@@ -906,21 +905,77 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             const activeCycle = viewingCustomCycle || getCurrentActiveCycle(cycleType);
-            doc.text(`MC SQUARE - Timesheet Report`, 14, 20);
+            
+            // Header Info
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(16);
+            doc.text("MC SQUARE - Timesheet Report", 14, 18);
+            
+            doc.setFont("helvetica", "normal");
             doc.setFontSize(10);
-            doc.text(`Period: ${activeCycle.startDate} to ${activeCycle.endDate}`, 14, 28);
+            doc.text(`Period: ${activeCycle.startDate} to ${activeCycle.endDate}`, 14, 25);
             
             let tableRows = [];
+            let tPresent = 0, tAbsent = 0, tNormal = 0, tOT = 0;
+
             getDatesInRange(activeCycle.startDate, activeCycle.endDate, !viewingCustomCycle).forEach(dateStr => {
-                let rec = attendanceData[dateStr] || { status: 'Not Recorded', normalHours: 0, otHours: 0, remarks: '-' };
-                tableRows.push([dateStr, rec.status, `${rec.normalHours || 0} Hrs`, `${rec.otHours || 0} Hrs`, rec.remarks || '-']);
+                let rec = attendanceData[dateStr];
+                let status = rec ? rec.status : 'Not Recorded';
+                let nHrs = (rec && rec.status === 'Present') ? (rec.normalHours !== undefined ? rec.normalHours : defaultShiftHours) : 0;
+                let oHrs = (rec && rec.status === 'Present') ? (rec.otHours || 0) : 0;
+                let remarks = rec ? (rec.remarks || '-') : '-';
+
+                if (rec) {
+                    if (rec.status === 'Present') { tPresent++; tNormal += nHrs; tOT += oHrs; }
+                    else { tAbsent++; }
+                }
+
+                tableRows.push([dateStr, status, `${nHrs} Hrs`, `${oHrs} Hrs`, remarks]);
             });
 
+            // Generate main table
             doc.autoTable({
-                startY: 35,
+                startY: 32,
                 head: [['Date', 'Status', 'Normal Hrs', 'OT Hrs', 'Remarks']],
                 body: tableRows,
+                theme: 'grid',
+                headStyles: { fillColor: [99, 102, 241] },
+                styles: { fontSize: 9 }
             });
+
+            // Calculate totals & earnings for summary block
+            let normalEarnings = tNormal * hourlyRate;
+            let otEarnings = (tOT * otRate) + allowances;
+            let netSalary = normalEarnings + otEarnings;
+
+            let finalY = doc.lastAutoTable.finalY + 10;
+            
+            // Check if summary fits on page, else add page
+            if (finalY > 250) {
+                doc.addPage();
+                finalY = 20;
+            }
+
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(12);
+            doc.text("Summary & Total Hours", 14, finalY);
+
+            let summaryData = [
+                ['Total Present Days', `${tPresent} Days`],
+                ['Total Absent Days', `${tAbsent} Days`],
+                ['Total Normal Hours', `${tNormal} Hours`],
+                ['Total Overtime (OT) Hours', `${tOT} Hours`],
+                ['Estimated Net Salary', `${netSalary.toFixed(2)} ${currencySymbol}`]
+            ];
+
+            doc.autoTable({
+                startY: finalY + 4,
+                body: summaryData,
+                theme: 'striped',
+                styles: { fontSize: 9, fontStyle: 'bold' },
+                columnStyles: { 0: { cellWidth: 80 }, 1: { cellWidth: 60 } }
+            });
+
             doc.save(`Timesheet_${activeCycle.startDate}_to_${activeCycle.endDate}.pdf`);
         }
 
