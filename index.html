@@ -1,116 +1,158 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en" dir="ltr" id="html-root">
 <head>
     <meta name="google-site-verification" content="Z7x9RTZEmPO-qEgee6EfJXOAwUNFXZT0yelA_jOqQpI" />
     <script src="https://pl31440102.profitableratecpmnetwork.com/45/b0/df/45b0df122dd423bd528e7e0dda1dc4ad.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Duty & Attendance Tracker</title>
+    <title>Pro Duty & Attendance Tracker</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+    <!-- Chart.js for Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- SheetJS for Excel Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- jsPDF for PDF Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
+        body { font-family: 'Inter', sans-serif; }
     </style>
     <script src="https://pl31440103.profitableratecpmnetwork.com/08/9d/94/089d94c9b9f2d455b28d21ac5cdb5764.js"></script>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen p-4 sm:p-8">
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen p-4 sm:p-8 transition-colors duration-200">
 
-    <div class="max-w-3xl mx-auto space-y-6">
+    <div class="max-w-4xl mx-auto space-y-6">
         
         <!-- Header -->
-        <header class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <header class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
                 <div>
-                    <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Duty & Attendance Tracker</h1>
-                    <p class="text-xs font-medium text-indigo-600 mt-1" id="header-cycle-label">Timesheet Cycle: Custom</p>
+                    <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Pro Duty & Attendance Tracker</h1>
+                    <p class="text-xs font-medium text-indigo-600 dark:text-indigo-400 mt-1" id="header-cycle-label">Timesheet Cycle: Custom</p>
                 </div>
-                <!-- Three-Dot Menu Button -->
-                <button onclick="toggleSidebar(true)" class="sm:hidden bg-gray-100 hover:bg-gray-200 p-2.5 rounded-xl text-gray-700 transition">
+                <!-- Menu Toggle -->
+                <button onclick="toggleSidebar(true)" class="sm:hidden bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 p-2.5 rounded-xl text-gray-700 dark:text-gray-200 transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                 </button>
             </div>
-            <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
-                <button onclick="shareApp()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-medium text-xs py-2 px-3.5 rounded-xl border border-indigo-200 transition flex items-center gap-1.5">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
-                    Share
+            <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
+                <!-- Dark Mode Toggle Button -->
+                <button onclick="toggleDarkMode()" class="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-yellow-400 p-2 rounded-xl border border-gray-200 dark:border-gray-600 transition" title="Toggle Dark Mode">
+                    <svg id="dark-mode-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                 </button>
-                <button onclick="toggleSidebar(true)" class="hidden sm:flex bg-gray-100 hover:bg-gray-200 py-2 px-3.5 rounded-xl text-xs font-semibold text-gray-700 items-center gap-1.5 transition">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                    Past Months Menu
-                </button>
-                <div class="text-right border-l pl-3 border-gray-200">
-                    <p class="text-xs text-gray-500 uppercase tracking-wider">Today</p>
-                    <p class="text-sm font-semibold text-gray-800" id="current-date"></p>
+                <button onclick="exportToExcel()" class="bg-emerald-50 dark:bg-emerald-900/30 hover:bg-emerald-100 text-emerald-700 dark:text-emerald-300 font-medium text-xs py-2 px-2.5 rounded-xl border border-emerald-200 dark:border-emerald-800 transition">Excel</button>
+                <button onclick="exportToPDF()" class="bg-rose-50 dark:bg-rose-900/30 hover:bg-rose-100 text-rose-700 dark:text-rose-300 font-medium text-xs py-2 px-2.5 rounded-xl border border-rose-200 dark:border-rose-800 transition">PDF</button>
+                <button onclick="toggleSidebar(true)" class="hidden sm:flex bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 py-2 px-3 rounded-xl text-xs font-semibold text-gray-700 dark:text-gray-200 items-center gap-1.5 transition">History & Backup</button>
+                <div class="text-right border-l pl-3 border-gray-200 dark:border-gray-700">
+                    <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Today</p>
+                    <p class="text-sm font-semibold text-gray-800 dark:text-gray-200" id="current-date"></p>
                 </div>
             </div>
         </header>
 
-        <!-- Sidebar / Drawer for Past Records -->
+        <!-- Sidebar / Drawer for History & Backup -->
         <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-50 hidden transition-opacity opacity-0" onclick="toggleSidebar(false)"></div>
-        <div id="sidebar-drawer" class="fixed top-0 right-0 h-full w-80 sm:w-96 bg-white z-50 shadow-2xl p-6 transform translate-x-full transition-transform duration-300 flex flex-col">
-            <div class="flex justify-between items-center border-b border-gray-100 pb-4 mb-4">
-                <h2 class="text-lg font-bold text-gray-900">Past Months Records</h2>
-                <button onclick="toggleSidebar(false)" class="text-gray-400 hover:text-gray-600 p-1 rounded-lg">
+        <div id="sidebar-drawer" class="fixed top-0 right-0 h-full w-80 sm:w-96 bg-white dark:bg-gray-800 z-50 shadow-2xl p-6 transform translate-x-full transition-transform duration-300 flex flex-col">
+            <div class="flex justify-between items-center border-b border-gray-100 dark:border-gray-700 pb-4 mb-4">
+                <h2 class="text-lg font-bold text-gray-900 dark:text-white">Past Records & Backup</h2>
+                <button onclick="toggleSidebar(false)" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1 rounded-lg">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
-            <p class="text-xs text-gray-500 mb-4">Select a past timesheet cycle to review total summary and records.</p>
+            
+            <!-- Backup / Restore Actions -->
+            <div class="bg-indigo-50/60 dark:bg-indigo-950/40 p-3.5 rounded-xl border border-indigo-100 dark:border-indigo-900 mb-4 space-y-2">
+                <p class="text-xs font-bold text-indigo-900 dark:text-indigo-300">Data Backup & Restore</p>
+                <div class="flex gap-2">
+                    <button onclick="exportJSONBackup()" class="flex-1 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 text-indigo-600 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-xs font-semibold py-1.5 px-2 rounded-lg transition">Export JSON</button>
+                    <label class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold py-1.5 px-2 rounded-lg transition text-center cursor-pointer">
+                        Import JSON <input type="file" id="import-file" class="hidden" accept=".json" onchange="importJSONBackup(event)">
+                    </label>
+                </div>
+            </div>
+
+            <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Select a past timesheet cycle:</p>
             <div id="past-months-container" class="flex-1 overflow-y-auto space-y-3 pr-1">
                 <!-- Past months dynamically loaded -->
             </div>
         </div>
 
-        <!-- Settings Card (Hours & Cycle Type) -->
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- Advanced Settings Card -->
+        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-                <label class="block text-xs font-bold text-gray-700 mb-1">Default Daily Duty Hours (Without OT)</label>
-                <div class="flex items-center gap-2">
-                    <input type="number" id="shift-hours-input" step="0.5" min="1" max="24" class="w-full bg-gray-50 border border-gray-300 text-gray-900 font-bold text-center py-2 px-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" value="10">
-                </div>
+                <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Default Duty Hours</label>
+                <input type="number" id="shift-hours-input" step="0.5" min="1" max="24" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-bold text-center py-2 px-3 rounded-xl focus:ring-2 focus:ring-indigo-500 text-sm" value="10">
             </div>
             <div>
-                <label class="block text-xs font-bold text-gray-700 mb-1">Timesheet Cycle Type</label>
-                <select id="cycle-type-select" class="w-full bg-gray-50 border border-gray-300 text-gray-900 font-medium py-2 px-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
-                    <option value="21_to_20">21st to 20th of next month</option>
-                    <option value="1_to_end">1st to End of month</option>
+                <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Timesheet Cycle</label>
+                <select id="cycle-type-select" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-medium py-2 px-3 rounded-xl focus:ring-2 focus:ring-indigo-500 text-sm">
+                    <option value="21_to_20">21st to 20th</option>
+                    <option value="1_to_end">1st to End of Month</option>
                 </select>
             </div>
-            <div class="sm:col-span-2 flex justify-end">
-                <button onclick="saveSettings()" class="bg-gray-900 hover:bg-indigo-600 text-white text-xs font-medium py-2.5 px-6 rounded-xl transition duration-150 shadow-sm">
-                    Save Settings
+            <div>
+                <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Currency Symbol</label>
+                <input type="text" id="currency-input" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-bold text-center py-2 px-3 rounded-xl focus:ring-2 focus:ring-indigo-500 text-sm" value="AED">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Hourly Rate (Normal)</label>
+                <input type="number" id="hourly-rate-input" step="0.5" min="0" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-bold text-center py-2 px-3 rounded-xl focus:ring-2 focus:ring-indigo-500 text-sm" value="0">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Overtime Hourly Rate</label>
+                <input type="number" id="ot-rate-input" step="0.5" min="0" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-bold text-center py-2 px-3 rounded-xl focus:ring-2 focus:ring-indigo-500 text-sm" value="0">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Allowances / Advance</label>
+                <input type="number" id="allowance-input" step="1" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-bold text-center py-2 px-3 rounded-xl focus:ring-2 focus:ring-indigo-500 text-sm" value="0">
+            </div>
+            <div class="sm:col-span-3 flex justify-between items-center">
+                <!-- Daily Notification Permission Button -->
+                <button onclick="requestNotificationPermission()" class="text-xs text-indigo-600 dark:text-indigo-400 font-semibold hover:underline flex items-center gap-1">
+                    🔔 Enable Daily Reminder Notification
+                </button>
+                <button onclick="saveSettings()" class="bg-gray-900 dark:bg-indigo-600 hover:bg-indigo-600 dark:hover:bg-indigo-700 text-white text-xs font-medium py-2.5 px-6 rounded-xl transition shadow-sm">
+                    Save Advanced Settings
                 </button>
             </div>
         </div>
 
-        <!-- Daily Prompt Card (Hidden if already answered today) -->
-        <div id="daily-prompt-card" class="bg-white p-6 rounded-2xl shadow-md border-2 border-indigo-500 hidden space-y-4">
+        <!-- Daily Prompt Card -->
+        <div id="daily-prompt-card" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md border-2 border-indigo-500 hidden space-y-4">
             <div class="flex items-center gap-3">
                 <span class="flex h-3 w-3 relative">
                   <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
                   <span class="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
                 </span>
-                <h2 class="text-lg font-bold text-gray-900" id="prompt-box-title">Daily Attendance Check</h2>
+                <h2 class="text-lg font-bold text-gray-900 dark:text-white" id="prompt-box-title">Daily Attendance Check</h2>
             </div>
-            <p class="text-gray-600 text-base" id="prompt-question-text"></p>
+            <p class="text-gray-600 dark:text-gray-300 text-base" id="prompt-question-text"></p>
             
-            <!-- Overtime Input Box -->
-            <div class="bg-gray-50 p-3.5 rounded-xl border border-gray-200 flex items-center justify-between gap-4">
-                <div>
-                    <label class="block text-xs font-bold text-gray-800">Extra Overtime (OT) Hours</label>
-                    <p class="text-xs text-gray-500">If OT is added, normal duty will adjust to 8 hrs</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="bg-gray-50 dark:bg-gray-700 p-3.5 rounded-xl border border-gray-200 dark:border-gray-600">
+                    <label class="block text-xs font-bold text-gray-800 dark:text-gray-200 mb-1">Extra Overtime (OT) Hours</label>
+                    <input type="number" id="prompt-ot-input" step="0.5" min="0" max="12" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-bold text-center py-1.5 px-3 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm" value="0">
                 </div>
-                <input type="number" id="prompt-ot-input" step="0.5" min="0" max="12" class="w-24 bg-white border border-gray-300 text-gray-900 font-bold text-center py-1.5 px-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" value="0">
+                <div class="bg-gray-50 dark:bg-gray-700 p-3.5 rounded-xl border border-gray-200 dark:border-gray-600">
+                    <label class="block text-xs font-bold text-gray-800 dark:text-gray-200 mb-1">Shift Type / Remarks</label>
+                    <input type="text" id="prompt-remarks-input" placeholder="e.g. Morning Shift, Client meeting" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-medium py-1.5 px-3 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm">
+                </div>
             </div>
 
             <div class="flex flex-col sm:flex-row gap-3 pt-2">
-                <button onclick="markAttendance(true)" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-xl transition duration-150 shadow-sm flex items-center justify-center gap-2">
+                <button onclick="markAttendance(true)" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-xl transition shadow-sm flex items-center justify-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                     Yes, Went to Duty
                 </button>
-                <button onclick="markAttendance(false)" class="flex-1 bg-white hover:bg-gray-50 text-rose-600 border border-rose-200 font-medium py-3 px-6 rounded-xl transition duration-150 flex items-center justify-center gap-2">
+                <button onclick="markAttendance(false)" class="flex-1 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 font-medium py-3 px-6 rounded-xl transition flex items-center justify-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     No, Absent / Off Day
                 </button>
@@ -118,54 +160,75 @@
         </div>
 
         <!-- Active Cycle Summary Dashboard -->
-        <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-5">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-100 pb-4 gap-2">
-                <h2 class="text-base font-bold text-gray-800" id="dashboard-title-label">Current Timesheet Summary</h2>
-                <span class="text-xs font-medium bg-indigo-50 text-indigo-700 py-1 px-3 rounded-full border border-indigo-100" id="cycle-range-text"></span>
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm space-y-5">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-100 dark:border-gray-700 pb-4 gap-2">
+                <h2 class="text-base font-bold text-gray-800 dark:text-white" id="dashboard-title-label">Current Timesheet Summary</h2>
+                <span class="text-xs font-medium bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 py-1 px-3 rounded-full border border-indigo-100 dark:border-indigo-900" id="cycle-range-text"></span>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 text-center">
-                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Present Days</p>
-                    <p class="text-2xl font-bold text-emerald-600 mt-1" id="total-present">0</p>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-xl border border-gray-100 dark:border-gray-600 text-center">
+                    <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Present Days</p>
+                    <p class="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-1" id="total-present">0</p>
                 </div>
-                <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 text-center">
-                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Absents</p>
-                    <p class="text-2xl font-bold text-rose-600 mt-1" id="total-absent">0</p>
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-xl border border-gray-100 dark:border-gray-600 text-center">
+                    <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Absents</p>
+                    <p class="text-2xl font-bold text-rose-600 dark:text-rose-400 mt-1" id="total-absent">0</p>
                 </div>
-                <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 text-center">
-                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Normal Hours</p>
-                    <p class="text-2xl font-bold text-indigo-600 mt-1"><span id="total-normal-hours">0</span> <span class="text-xs font-normal text-gray-500">Hrs</span></p>
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-xl border border-gray-100 dark:border-gray-600 text-center">
+                    <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Normal Hours</p>
+                    <p class="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mt-1"><span id="total-normal-hours">0</span></p>
                 </div>
-                <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 text-center">
-                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Total OT Hours</p>
-                    <p class="text-2xl font-bold text-amber-600 mt-1"><span id="total-ot-hours">0</span> <span class="text-xs font-normal text-gray-500">Hrs</span></p>
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-xl border border-gray-100 dark:border-gray-600 text-center">
+                    <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">OT Hours</p>
+                    <p class="text-2xl font-bold text-amber-600 dark:text-amber-400 mt-1"><span id="total-ot-hours">0</span></p>
                 </div>
             </div>
-            <div class="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100 text-center flex justify-between items-center">
-                <span class="text-sm font-semibold text-gray-700">Grand Total Working Hours (Normal + OT):</span>
-                <span class="text-xl font-bold text-indigo-700"><span id="grand-total-hours">0</span> Hours</span>
+            
+            <!-- Earnings Calculation Box -->
+            <div class="bg-emerald-50/60 dark:bg-emerald-950/40 p-4 rounded-xl border border-emerald-100 dark:border-emerald-900 grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+                <div>
+                    <p class="text-xs font-semibold text-emerald-800 dark:text-emerald-300">Normal Earnings</p>
+                    <p class="text-lg font-bold text-emerald-700 dark:text-emerald-400" id="normal-earnings-val">0</p>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-emerald-800 dark:text-emerald-300">OT Earnings + Allowances</p>
+                    <p class="text-lg font-bold text-emerald-700 dark:text-emerald-400" id="ot-earnings-val">0</p>
+                </div>
+                <div class="border-t sm:border-t-0 sm:border-l border-emerald-200 dark:border-emerald-800 pt-2 sm:pt-0">
+                    <p class="text-xs font-bold text-emerald-900 dark:text-emerald-200 uppercase">Estimated Net Salary</p>
+                    <p class="text-2xl font-black text-emerald-800 dark:text-emerald-300" id="net-salary-val">0</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Chart Section -->
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
+            <h2 class="text-base font-bold text-gray-800 dark:text-white mb-4">Hours Analytics</h2>
+            <div class="h-64 relative">
+                <canvas id="analyticsChart"></canvas>
             </div>
         </div>
 
         <!-- History Records Table -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
             <div class="flex justify-between items-center mb-4">
-                <h2 class="text-base font-bold text-gray-800" id="table-title-label">Attendance History & Cycle Days</h2>
-                <button id="reset-view-btn" onclick="resetToCurrentCycle()" class="hidden text-xs bg-indigo-50 text-indigo-600 font-medium py-1.5 px-3 rounded-lg border border-indigo-200 hover:bg-indigo-100 transition">Back to Current Cycle</button>
+                <h2 class="text-base font-bold text-gray-800 dark:text-white" id="table-title-label">Attendance History & Cycle Days</h2>
+                <button id="reset-view-btn" onclick="resetToCurrentCycle()" class="hidden text-xs bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-medium py-1.5 px-3 rounded-lg border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100 transition">Back to Current Cycle</button>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="border-b border-gray-100 text-gray-400 text-xs uppercase tracking-wider">
+                        <tr class="border-b border-gray-100 dark:border-gray-700 text-gray-400 text-xs uppercase tracking-wider">
                             <th class="py-3 px-3">Date</th>
                             <th class="py-3 px-3">Status</th>
                             <th class="py-3 px-3">Normal Hrs</th>
                             <th class="py-3 px-3">OT Hrs</th>
+                            <th class="py-3 px-3">Remarks</th>
                             <th class="py-3 px-3 text-right">Action</th>
                         </tr>
                     </thead>
-                    <tbody id="history-table-body" class="divide-y divide-gray-100 text-sm">
-                        <!-- Dynamic Data injected via JavaScript -->
+                    <tbody id="history-table-body" class="divide-y divide-gray-100 dark:divide-gray-700 text-sm">
+                        <!-- Dynamic Data -->
                     </tbody>
                 </table>
             </div>
@@ -176,7 +239,17 @@
     <!-- JavaScript Application Logic -->
     <script>
         let selectedDateToMark = null;
-        let viewingCustomCycle = null; // اگر یوزر کسی پرانے مہینے کو سلیکٹ کرے
+        let viewingCustomCycle = null;
+        let analyticsChartInstance = null;
+
+        let attendanceData = JSON.parse(localStorage.getItem('duty_attendance_data')) || {};
+        let defaultShiftHours = parseFloat(localStorage.getItem('duty_shift_hours')) || 10;
+        let cycleType = localStorage.getItem('duty_cycle_type') || '21_to_20';
+        let currencySymbol = localStorage.getItem('duty_currency') || 'AED';
+        let hourlyRate = parseFloat(localStorage.getItem('duty_hourly_rate')) || 0;
+        let otRate = parseFloat(localStorage.getItem('duty_ot_rate')) || 0;
+        let allowances = parseFloat(localStorage.getItem('duty_allowances')) || 0;
+        let isDarkMode = localStorage.getItem('duty_dark_mode') === 'true';
 
         function getTodayDateString() {
             const now = new Date();
@@ -192,75 +265,87 @@
             return date.toLocaleDateString('en-US', options);
         }
 
-        function getCurrentActiveCycle(cycleType) {
+        function toggleDarkMode() {
+            isDarkMode = !isDarkMode;
+            localStorage.setItem('duty_dark_mode', isDarkMode);
+            applyTheme();
+        }
+
+        function applyTheme() {
+            const htmlRoot = document.getElementById('html-root');
+            if (isDarkMode) {
+                htmlRoot.classList.add('dark');
+            } else {
+                htmlRoot.classList.remove('dark');
+            }
+        }
+
+        function requestNotificationPermission() {
+            if (!("Notification" in window)) {
+                alert("This browser does not support desktop notifications.");
+                return;
+            }
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    alert("Notifications enabled successfully! You will receive daily check-in reminders.");
+                    new Notification("Duty & Attendance Tracker", { body: "Daily reminder notifications are now active!" });
+                } else {
+                    alert("Permission denied for notifications.");
+                }
+            });
+        }
+
+        function checkDailyReminder() {
+            if ("Notification" in window && Notification.permission === "granted") {
+                const todayStr = getTodayDateString();
+                if (!attendanceData[todayStr]) {
+                    new Notification("Pending Attendance", { body: "Don't forget to mark your duty attendance for today!" });
+                }
+            }
+        }
+
+        function getCurrentActiveCycle(cType) {
             const now = new Date();
             let y = now.getFullYear();
             let m = now.getMonth() + 1;
             let d = now.getDate();
 
-            let startYear, startMonth, endYear, endMonth;
-
-            if (cycleType === '21_to_20') {
+            if (cType === '21_to_20') {
+                let startY = y, startM = m, endY = y, endM = m + 1;
                 if (d >= 21) {
-                    startMonth = m;
-                    startYear = y;
-                    endMonth = m + 1;
-                    endYear = y;
-                    if (endMonth > 12) { endMonth = 1; endYear += 1; }
+                    startM = m;
+                    endM = m + 1;
                 } else {
-                    startMonth = m - 1;
-                    startYear = y;
-                    if (startMonth < 1) { startMonth = 12; startYear -= 1; }
-                    endMonth = m;
-                    endYear = y;
+                    startM = m - 1;
+                    startY = y;
+                    if (startM < 1) { startM = 12; startY -= 1; }
+                    endM = m;
                 }
+                if (endM > 12) { endM = 1; endY += 1; }
                 return {
-                    startDate: `${startYear}-${String(startMonth).padStart(2, '0')}-21`,
-                    endDate: `${endYear}-${String(endMonth).padStart(2, '0')}-20`
+                    startDate: `${startY}-${String(startM).padStart(2, '0')}-21`,
+                    endDate: `${endY}-${String(endM).padStart(2, '0')}-20`
                 };
             } else {
-                startMonth = m;
-                startYear = y;
                 let lastDay = new Date(y, m, 0).getDate();
                 return {
-                    startDate: `${startYear}-${String(startMonth).padStart(2, '0')}-01`,
-                    endDate: `${startYear}-${String(startMonth).padStart(2, '0')}-${lastDay}`
+                    startDate: `${y}-${String(m).padStart(2, '0')}-01`,
+                    endDate: `${y}-${String(m).padStart(2, '0')}-${lastDay}`
                 };
-            }
-        }
-
-        let attendanceData = JSON.parse(localStorage.getItem('duty_attendance_data')) || {};
-        let defaultShiftHours = parseFloat(localStorage.getItem('duty_shift_hours')) || 10;
-        let cycleType = localStorage.getItem('duty_cycle_type') || '21_to_20';
-
-        function migrateOldData() {
-            let updated = false;
-            for (let date in attendanceData) {
-                let rec = attendanceData[date];
-                if (rec.status === 'Present') {
-                    if (rec.normalHours === undefined || rec.normalHours === null) {
-                        rec.normalHours = defaultShiftHours;
-                        updated = true;
-                    }
-                    if (rec.otHours === undefined || rec.otHours === null) {
-                        rec.otHours = 0;
-                        updated = true;
-                    }
-                }
-            }
-            if (updated) {
-                localStorage.setItem('duty_attendance_data', JSON.stringify(attendanceData));
             }
         }
 
         function initApp() {
-            migrateOldData();
-
+            applyTheme();
             const todayStr = getTodayDateString();
             document.getElementById('current-date').innerText = formatDisplayDate(todayStr);
             
             document.getElementById('shift-hours-input').value = defaultShiftHours;
             document.getElementById('cycle-type-select').value = cycleType;
+            document.getElementById('currency-input').value = currencySymbol;
+            document.getElementById('hourly-rate-input').value = hourlyRate;
+            document.getElementById('ot-rate-input').value = otRate;
+            document.getElementById('allowance-input').value = allowances;
             
             const cycleText = cycleType === '21_to_20' ? 'Timesheet Cycle: 21st to 20th' : 'Timesheet Cycle: 1st to End of Month';
             document.getElementById('header-cycle-label').innerText = cycleText;
@@ -268,6 +353,7 @@
             if (!attendanceData[todayStr]) {
                 selectedDateToMark = todayStr;
                 document.getElementById('prompt-ot-input').value = 0;
+                document.getElementById('prompt-remarks-input').value = '';
                 document.getElementById('daily-prompt-card').classList.remove('hidden');
                 document.getElementById('prompt-box-title').innerText = "Daily Attendance Check";
                 document.getElementById('prompt-question-text').innerText = `Did you go to duty today (${formatDisplayDate(todayStr)})?`;
@@ -277,9 +363,9 @@
 
             buildPastMonthsList();
             updateDashboardAndTable();
+            checkDailyReminder();
         }
 
-        // سائیڈ بار کو کھولنے یا بند کرنے کے لیے
         function toggleSidebar(open) {
             const drawer = document.getElementById('sidebar-drawer');
             const overlay = document.getElementById('sidebar-overlay');
@@ -294,137 +380,44 @@
             }
         }
 
-        // پچھلے مہینوں کی لسٹ خودکار طور پر تیار کرنا
-        function buildPastMonthsList() {
-            const container = document.getElementById('past-months-container');
-            container.innerHTML = '';
-
-            // تمام ریکارڈز میں سے تاریخیں نکال کر مہینے معلوم کریں
-            let dates = Object.keys(attendanceData).sort().reverse();
-            if (dates.length === 0) {
-                container.innerHTML = `<p class="text-xs text-gray-400 text-center py-6">No past records available yet.</p>`;
-                return;
-            }
-
-            // مہینے کے سائیکلز کے گروپس بنائیں
-            let cyclesMap = {};
-            dates.forEach(dateStr => {
-                let cycleKey = getCycleKeyForDateStr(dateStr, cycleType);
-                if (!cyclesMap[cycleKey]) {
-                    cyclesMap[cycleKey] = getCycleRangeForKey(cycleKey, cycleType);
-                }
-            });
-
-            let sortedCycleKeys = Object.keys(cyclesMap).sort().reverse();
-
-            sortedCycleKeys.forEach(key => {
-                let range = cyclesMap[key];
-                let btn = document.createElement('button');
-                btn.className = "w-full text-left bg-gray-50 hover:bg-indigo-50 border border-gray-200 hover:border-indigo-200 p-3.5 rounded-xl transition flex justify-between items-center group";
-                btn.onclick = () => {
-                    viewingCustomCycle = range;
-                    toggleSidebar(false);
-                    updateDashboardAndTable();
-                };
-
-                btn.innerHTML = `
-                    <div>
-                        <p class="text-xs font-bold text-gray-800 group-hover:text-indigo-600">${range.title}</p>
-                        <p class="text-[11px] text-gray-500 mt-0.5">${range.startDate} to ${range.endDate}</p>
-                    </div>
-                    <svg class="w-4 h-4 text-gray-400 group-hover:text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                `;
-                container.appendChild(btn);
-            });
-        }
-
-        function getCycleKeyForDateStr(dateStr, cType) {
-            let [y, m, d] = dateStr.split('-').map(Number);
-            if (cType === '21_to_20') {
-                if (d >= 21) {
-                    m += 1;
-                    if (m > 12) { m = 1; y += 1; }
-                }
-                return `${y}-${String(m).padStart(2, '0')}`;
-            } else {
-                return `${y}-${String(m).padStart(2, '0')}`;
-            }
-        }
-
-        function getCycleRangeForKey(cycleKey, cType) {
-            let [y, m] = cycleKey.split('-').map(Number);
-            if (cType === '21_to_20') {
-                let prevY = y, prevM = m - 1;
-                if (prevM < 1) { prevM = 12; prevY -= 1; }
-                
-                const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                let title = `${monthNames[prevM-1]} 21 - ${monthNames[m-1]} 20, ${y}`;
-                return {
-                    title: title,
-                    startDate: `${prevY}-${String(prevM).padStart(2, '0')}-21`,
-                    endDate: `${y}-${String(m).padStart(2, '0')}-20`
-                };
-            } else {
-                const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                let lastDay = new Date(y, m, 0).getDate();
-                return {
-                    title: `${monthNames[m-1]} ${y}`,
-                    startDate: `${y}-${String(m).padStart(2, '0')}-01`,
-                    endDate: `${y}-${String(m).padStart(2, '0')}-${lastDay}`
-                };
-            }
-        }
-
-        function resetToCurrentCycle() {
-            viewingCustomCycle = null;
-            updateDashboardAndTable();
-        }
-
-        function openPromptForDate(dateStr) {
-            selectedDateToMark = dateStr;
-            document.getElementById('prompt-ot-input').value = 0;
-            document.getElementById('daily-prompt-card').classList.remove('hidden');
-            document.getElementById('prompt-box-title').innerText = `Pending Attendance Check`;
-            document.getElementById('prompt-question-text').innerText = `Did you go to duty on ${formatDisplayDate(dateStr)}?`;
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
         function saveSettings() {
-            const inputVal = parseFloat(document.getElementById('shift-hours-input').value);
-            const selectVal = document.getElementById('cycle-type-select').value;
-
-            if (isNaN(inputVal) || inputVal <= 0) {
-                alert("Please enter a valid number of hours.");
-                return;
-            }
-
-            defaultShiftHours = inputVal;
-            cycleType = selectVal;
+            defaultShiftHours = parseFloat(document.getElementById('shift-hours-input').value) || 10;
+            cycleType = document.getElementById('cycle-type-select').value;
+            currencySymbol = document.getElementById('currency-input').value || 'AED';
+            hourlyRate = parseFloat(document.getElementById('hourly-rate-input').value) || 0;
+            otRate = parseFloat(document.getElementById('ot-rate-input').value) || 0;
+            allowances = parseFloat(document.getElementById('allowance-input').value) || 0;
 
             localStorage.setItem('duty_shift_hours', defaultShiftHours);
             localStorage.setItem('duty_cycle_type', cycleType);
+            localStorage.setItem('duty_currency', currencySymbol);
+            localStorage.setItem('duty_hourly_rate', hourlyRate);
+            localStorage.setItem('duty_ot_rate', otRate);
+            localStorage.setItem('duty_allowances', allowances);
 
-            alert("Settings saved successfully!");
+            alert("Advanced settings saved successfully!");
             initApp();
         }
 
         function markAttendance(isWent) {
             if (!selectedDateToMark) return;
-            
             const otVal = parseFloat(document.getElementById('prompt-ot-input').value) || 0;
+            const remarksVal = document.getElementById('prompt-remarks-input').value.trim();
 
             if (isWent) {
-                let normalHrs = (otVal > 0) ? 8 : defaultShiftHours;
+                let normalHrs = (otVal > 0 && defaultShiftHours > 8) ? 8 : defaultShiftHours;
                 attendanceData[selectedDateToMark] = { 
                     status: 'Present', 
                     normalHours: normalHrs, 
-                    otHours: otVal 
+                    otHours: otVal,
+                    remarks: remarksVal 
                 };
             } else {
                 attendanceData[selectedDateToMark] = { 
                     status: 'Absent', 
                     normalHours: 0, 
-                    otHours: 0 
+                    otHours: 0,
+                    remarks: remarksVal || 'Absent'
                 };
             }
 
@@ -434,31 +427,25 @@
             initApp();
         }
 
-        function shareApp() {
-            const shareText = "Check out this awesome Duty & Attendance Tracker Web App to manage your work hours and monthly timesheet easily!";
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Duty & Attendance Tracker',
-                    text: shareText,
-                    url: window.location.href,
-                }).catch(console.error);
-            } else {
-                navigator.clipboard.writeText(window.location.href);
-                alert("App link copied to clipboard!");
-            }
+        function openPromptForDate(dateStr) {
+            selectedDateToMark = dateStr;
+            document.getElementById('prompt-ot-input').value = 0;
+            document.getElementById('prompt-remarks-input').value = '';
+            document.getElementById('daily-prompt-card').classList.remove('hidden');
+            document.getElementById('prompt-box-title').innerText = `Pending Attendance Check`;
+            document.getElementById('prompt-question-text').innerText = `Did you go to duty on ${formatDisplayDate(dateStr)}?`;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function getDatesInRange(startDateStr, endDateStr, isCurrentActive) {
             let arr = [];
             let dt = new Date(startDateStr);
             let endDt = new Date(endDateStr);
-            
             if (isCurrentActive) {
                 let todayStr = getTodayDateString();
                 let maxDt = new Date(todayStr);
                 if (endDt > maxDt) endDt = maxDt;
             }
-
             while (dt <= endDt) {
                 let y = dt.getFullYear();
                 let m = String(dt.getMonth() + 1).padStart(2, '0');
@@ -492,64 +479,68 @@
 
             const tableBody = document.getElementById('history-table-body');
             tableBody.innerHTML = '';
-
             const cycleDates = getDatesInRange(activeCycle.startDate, activeCycle.endDate, isCurrentActive);
 
-            if (cycleDates.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-gray-400">No attendance records found.</td></tr>`;
-            }
+            let chartLabels = [];
+            let chartNormalData = [];
+            let chartOTData = [];
 
-            cycleDates.forEach(dateStr => {
+            cycleDates.slice().reverse().forEach(dateStr => {
                 const record = attendanceData[dateStr];
                 const row = document.createElement('tr');
-                row.className = "hover:bg-gray-50/80 transition";
+                row.className = "hover:bg-gray-50/80 dark:hover:bg-gray-700/50 transition";
+
+                let nHrs = 0;
+                let oHrs = 0;
 
                 if (record) {
                     if (record.status === 'Present') {
                         totalPresent++;
-                        let nHrs = (record.normalHours !== undefined ? record.normalHours : defaultShiftHours);
-                        let oHrs = (record.otHours || 0);
-                        if (oHrs > 0 && nHrs > 8) nHrs = 8;
-
+                        nHrs = (record.normalHours !== undefined ? record.normalHours : defaultShiftHours);
+                        oHrs = (record.otHours || 0);
                         totalNormalHours += nHrs;
                         totalOtHours += oHrs;
                     } else {
                         totalAbsent++;
                     }
 
+                    chartLabels.push(dateStr.slice(5));
+                    chartNormalData.push(nHrs);
+                    chartOTData.push(oHrs);
+
                     const statusBadge = record.status === 'Present' 
-                        ? `<span class="bg-emerald-50 text-emerald-700 py-1 px-3 rounded-full text-xs font-semibold border border-emerald-200">Present</span>`
-                        : `<span class="bg-rose-50 text-rose-700 py-1 px-3 rounded-full text-xs font-semibold border border-rose-200">Absent</span>`;
-
-                    let displayedNormalHrs = (record.normalHours !== undefined ? record.normalHours : defaultShiftHours);
-                    if ((record.otHours || 0) > 0 && displayedNormalHrs > 8) displayedNormalHrs = 8;
-
-                    const otDisplay = ((record.otHours || 0) > 0) ? `${record.otHours} Hrs` : `-`;
+                        ? `<span class="bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 py-1 px-3 rounded-full text-xs font-semibold border border-emerald-200 dark:border-emerald-800">Present</span>`
+                        : `<span class="bg-rose-50 dark:bg-rose-950 text-rose-700 dark:text-rose-300 py-1 px-3 rounded-full text-xs font-semibold border border-rose-200 dark:border-rose-800">Absent</span>`;
 
                     row.innerHTML = `
-                        <td class="py-3.5 px-3 text-gray-700 font-medium">${dateStr}</td>
+                        <td class="py-3.5 px-3 text-gray-700 dark:text-gray-300 font-medium">${dateStr}</td>
                         <td class="py-3.5 px-3">${statusBadge}</td>
-                        <td class="py-3.5 px-3 font-semibold text-gray-800">${displayedNormalHrs} Hrs</td>
-                        <td class="py-3.5 px-3 font-semibold text-amber-600">${otDisplay}</td>
+                        <td class="py-3.5 px-3 font-semibold text-gray-800 dark:text-gray-200">${nHrs} Hrs</td>
+                        <td class="py-3.5 px-3 font-semibold text-amber-600 dark:text-amber-400">${oHrs > 0 ? oHrs + ' Hrs' : '-'}</td>
+                        <td class="py-3.5 px-3 text-xs text-gray-500 dark:text-gray-400">${record.remarks || '-'}</td>
                         <td class="py-3.5 px-3 text-right text-xs text-gray-400">Recorded</td>
                     `;
                 } else {
+                    chartLabels.push(dateStr.slice(5));
+                    chartNormalData.push(0);
+                    chartOTData.push(0);
+
                     if (isCurrentActive) {
                         row.innerHTML = `
-                            <td class="py-3.5 px-3 text-gray-700 font-medium">${dateStr}</td>
-                            <td class="py-3.5 px-3"><span class="bg-amber-50 text-amber-700 py-1 px-3 rounded-full text-xs font-semibold border border-amber-200">Pending</span></td>
+                            <td class="py-3.5 px-3 text-gray-700 dark:text-gray-300 font-medium">${dateStr}</td>
+                            <td class="py-3.5 px-3"><span class="bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 py-1 px-3 rounded-full text-xs font-semibold border border-amber-200 dark:border-amber-800">Pending</span></td>
+                            <td class="py-3.5 px-3 text-gray-400">-</td>
                             <td class="py-3.5 px-3 text-gray-400">-</td>
                             <td class="py-3.5 px-3 text-gray-400">-</td>
                             <td class="py-3.5 px-3 text-right">
-                                <button onclick="openPromptForDate('${dateStr}')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-medium text-xs py-1.5 px-3 rounded-lg border border-indigo-200 transition">
-                                    Mark Now
-                                </button>
+                                <button onclick="openPromptForDate('${dateStr}')" class="bg-indigo-50 dark:bg-indigo-950 hover:bg-indigo-100 text-indigo-600 dark:text-indigo-300 font-medium text-xs py-1.5 px-3 rounded-lg border border-indigo-200 dark:border-indigo-800 transition">Mark Now</button>
                             </td>
                         `;
                     } else {
                         row.innerHTML = `
-                            <td class="py-3.5 px-3 text-gray-700 font-medium">${dateStr}</td>
-                            <td class="py-3.5 px-3"><span class="bg-gray-100 text-gray-500 py-1 px-3 rounded-full text-xs font-semibold">Not Recorded</span></td>
+                            <td class="py-3.5 px-3 text-gray-700 dark:text-gray-300 font-medium">${dateStr}</td>
+                            <td class="py-3.5 px-3"><span class="bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 py-1 px-3 rounded-full text-xs font-semibold">Not Recorded</span></td>
+                            <td class="py-3.5 px-3 text-gray-400">-</td>
                             <td class="py-3.5 px-3 text-gray-400">-</td>
                             <td class="py-3.5 px-3 text-gray-400">-</td>
                             <td class="py-3.5 px-3 text-right text-xs text-gray-400">-</td>
@@ -559,13 +550,146 @@
                 tableBody.appendChild(row);
             });
 
-            const grandTotalHours = totalNormalHours + totalOtHours;
+            let normalEarnings = totalNormalHours * hourlyRate;
+            let otEarnings = (totalOtHours * otRate) + allowances;
+            let netSalary = normalEarnings + otEarnings;
 
             document.getElementById('total-present').innerText = totalPresent;
             document.getElementById('total-absent').innerText = totalAbsent;
-            document.getElementById('total-normal-hours').innerText = totalNormalHours;
-            document.getElementById('total-ot-hours').innerText = totalOtHours;
-            document.getElementById('grand-total-hours').innerText = grandTotalHours;
+            document.getElementById('total-normal-hours').innerText = totalNormalHours + ' Hrs';
+            document.getElementById('total-ot-hours').innerText = totalOtHours + ' Hrs';
+            
+            document.getElementById('normal-earnings-val').innerText = `${normalEarnings.toFixed(2)} ${currencySymbol}`;
+            document.getElementById('ot-earnings-val').innerText = `${otEarnings.toFixed(2)} ${currencySymbol}`;
+            document.getElementById('net-salary-val').innerText = `${netSalary.toFixed(2)} ${currencySymbol}`;
+
+            updateChart(chartLabels, chartNormalData, chartOTData);
+            buildPastMonthsList();
+        }
+
+        function updateChart(labels, normalData, otData) {
+            const ctx = document.getElementById('analyticsChart').getContext('2d');
+            if (analyticsChartInstance) {
+                analyticsChartInstance.destroy();
+            }
+            analyticsChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Normal Hours', data: normalData, backgroundColor: '#6366f1', borderRadius: 4 },
+                        { label: 'OT Hours', data: otData, backgroundColor: '#f59e0b', borderRadius: 4 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { stacked: true, grid: { display: false } },
+                        y: { stacked: true, beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        function buildPastMonthsList() {
+            const container = document.getElementById('past-months-container');
+            container.innerHTML = '';
+            let dates = Object.keys(attendanceData).sort().reverse();
+            if (dates.length === 0) {
+                container.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">No past records available.</p>`;
+                return;
+            }
+            let cyclesMap = {};
+            dates.forEach(dateStr => {
+                let [y, m, d] = dateStr.split('-').map(Number);
+                let key = `${y}-${String(m).padStart(2, '0')}`;
+                if (!cyclesMap[key]) {
+                    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                    cyclesMap[key] = { title: `${monthNames[m-1]} ${y}`, startDate: `${y}-${String(m).padStart(2, '0')}-01`, endDate: `${y}-${String(m).padStart(2, '0')}-${new Date(y, m, 0).getDate()}` };
+                }
+            });
+            Object.keys(cyclesMap).sort().reverse().forEach(key => {
+                let range = cyclesMap[key];
+                let btn = document.createElement('button');
+                btn.className = "w-full text-left bg-gray-50 dark:bg-gray-700 hover:bg-indigo-50 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 p-3 rounded-xl transition flex justify-between items-center";
+                btn.onclick = () => { viewingCustomCycle = range; toggleSidebar(false); updateDashboardAndTable(); };
+                btn.innerHTML = `<div><p class="text-xs font-bold text-gray-800 dark:text-gray-200">${range.title}</p><p class="text-[11px] text-gray-500 dark:text-gray-400">${range.startDate} to ${range.endDate}</p></div><svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>`;
+                container.appendChild(btn);
+            });
+        }
+
+        function resetToCurrentCycle() {
+            viewingCustomCycle = null;
+            updateDashboardAndTable();
+        }
+
+        function exportToExcel() {
+            const activeCycle = viewingCustomCycle || getCurrentActiveCycle(cycleType);
+            const cycleDates = getDatesInRange(activeCycle.startDate, activeCycle.endDate, !viewingCustomCycle);
+            let excelData = [];
+            cycleDates.forEach(dateStr => {
+                let rec = attendanceData[dateStr] || { status: 'Not Recorded', normalHours: 0, otHours: 0, remarks: '-' };
+                excelData.push({ Date: dateStr, Status: rec.status, 'Normal Hours': rec.normalHours || 0, 'OT Hours': rec.otHours || 0, Remarks: rec.remarks || '-' });
+            });
+            const worksheet = XLSX.utils.json_to_sheet(excelData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Timesheet");
+            XLSX.writeFile(workbook, `Timesheet_${activeCycle.startDate}_to_${activeCycle.endDate}.xlsx`);
+        }
+
+        function exportToPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const activeCycle = viewingCustomCycle || getCurrentActiveCycle(cycleType);
+            doc.text(`Duty & Attendance Timesheet Report`, 14, 20);
+            doc.setFontSize(10);
+            doc.text(`Period: ${activeCycle.startDate} to ${activeCycle.endDate}`, 14, 28);
+            
+            let tableRows = [];
+            getDatesInRange(activeCycle.startDate, activeCycle.endDate, !viewingCustomCycle).forEach(dateStr => {
+                let rec = attendanceData[dateStr] || { status: 'Not Recorded', normalHours: 0, otHours: 0, remarks: '-' };
+                tableRows.push([dateStr, rec.status, `${rec.normalHours || 0} Hrs`, `${rec.otHours || 0} Hrs`, rec.remarks || '-']);
+            });
+
+            doc.autoTable({
+                startY: 35,
+                head: [['Date', 'Status', 'Normal Hrs', 'OT Hrs', 'Remarks']],
+                body: tableRows,
+            });
+            doc.save(`Timesheet_${activeCycle.startDate}_to_${activeCycle.endDate}.pdf`);
+        }
+
+        function exportJSONBackup() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(attendanceData));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `attendance_backup_${getTodayDateString()}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function importJSONBackup(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (imported && typeof imported === 'object') {
+                        attendanceData = imported;
+                        localStorage.setItem('duty_attendance_data', JSON.stringify(attendanceData));
+                        alert("Backup restored successfully!");
+                        initApp();
+                    } else {
+                        alert("Invalid backup file.");
+                    }
+                } catch(err) {
+                    alert("Error parsing JSON file.");
+                }
+            };
+            reader.readAsText(file);
         }
 
         window.onload = initApp;
